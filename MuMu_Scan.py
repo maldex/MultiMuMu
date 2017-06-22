@@ -13,6 +13,20 @@ from MuMuMasterLib.MuMuTuner import MuMuTuner, SshHostHandler
 
 ######################################################################################################
 
+class StupidLogger(object):
+    def _out(self,s):
+        print s
+    def error(self,s):
+        self._out('ERROR:' + s)
+    def warn(self, s):
+        self._out('WARN:' + s)
+    def info(self, s):
+        self._out('INFO:' + s)
+    def debug(self, s):
+        self._out('DEBUG:' + s)
+
+MyLogger_scan = StupidLogger()
+
 class MuMuTunerScanner(SshHostHandler):
 
     def init(self, tuner, type):
@@ -43,17 +57,17 @@ class MuMuTunerScanner(SshHostHandler):
         return cmd, outfile + '.xspf'
 
     def scan_and_decode_xsfp_to_AM_station(self, country=None, sat=None, DiSEqC=None, do_scan=False):
-        MyLogger.info(self.host + ": scanning on tuner:" + self.tuner + " sat:"+str(sat) + " DiSEqC:" + str(DiSEqC) )
+        MyLogger_scan.info(self.host + ": scanning on tuner:" + self.tuner + " sat:"+str(sat) + " DiSEqC:" + str(DiSEqC) )
 
         cmd, outfile = self.w_scan(country=country, sat=sat, DiSEqC=DiSEqC)
-        MyLogger.debug(self.host + ": " + cmd)
+        MyLogger_scan.debug(self.host + ": " + cmd)
         if do_scan:
-            MyLogger.info(self.host + ": scanning ... this will take a while")
+            MyLogger_scan.info(self.host + ": scanning ... this will take a while")
             self.execute(cmd)
         else:
-            MyLogger.info(self.host + ": skipping actual scan")
+            MyLogger_scan.info(self.host + ": missing --do_scan, skipping the actual scan")
 
-        MyLogger.debug(self.host + ": fetching contents of " + outfile)
+        MyLogger_scan.debug(self.host + ": fetching contents of " + outfile)
 
         try:
             self.execute('cp ' + outfile + ' ' + outfile + '.2')
@@ -61,22 +75,22 @@ class MuMuTunerScanner(SshHostHandler):
                 with sftp.open(outfile, 'r') as f:
                     scan_result_raw = f.read()
         except Exception, e:
-            MyLogger.error(str(e) + ': ' + outfile)
+            MyLogger_scan.error(str(e) + ': ' + outfile)
             return False
 
         try:
             doc = xmltodict.parse(scan_result_raw)
         except Exception, e:
-            MyLogger.error(str(e) + ': ' + outfile)
+            MyLogger_scan.error(str(e) + ': ' + outfile)
             return False
 
         try:  # trying to access keys within the document
-            MyLogger.info('found ' + str(len(doc['playlist']['trackList']['track'])) +' stations')
+            MyLogger_scan.info('found ' + str(len(doc['playlist']['trackList']['track'])) +' stations')
         except KeyError:
-            MyLogger.error('no playlist/trackList/track found!')
+            MyLogger_scan.error('no playlist/trackList/track found!')
             return False
         except TypeError:
-            MyLogger.error('no playlist/trackList/track found!')
+            MyLogger_scan.error('no playlist/trackList/track found!')
             return False
 
 
@@ -86,7 +100,6 @@ class MuMuTunerScanner(SshHostHandler):
                 continue
 
             s_freq = float(e['location'].split('=')[1]) / 1000
-
             option = {}
             for v in e['extension']['vlc:option']:
                 kv = v.split('=')
@@ -105,6 +118,7 @@ class MuMuTunerScanner(SshHostHandler):
                 station.dvbs_srate(int(option['dvb-srate']) / 1000)
 
             self.stations.append(station)
+
         return True
 
     def do_it(self, do_scan=False):
@@ -120,12 +134,12 @@ class MuMuTunerScanner(SshHostHandler):
                     b = self.scan_and_decode_xsfp_to_AM_station(sat=sat, DiSEqC=diseqc, do_scan=do_scan)
                     r = (r and b)
                     self.save()
-                    time.sleep(5)
         self.save()
         return r
 
     def save(self):
         if len(self.stations) == 0:
+            MyLogger_scan.warn('no stations so far found')
             return
         tuner_cfg = 'config/tuner.' + self.host + '-' + self.tuner + '.json'
         station_cfg = 'config/station.' + self.host + '-' + self.tuner + '.json'
@@ -141,7 +155,7 @@ class MuMuTunerScanner(SshHostHandler):
         }
         with open(tuner_cfg, 'w') as f:
             f.write(json.dumps(tc, indent=4, sort_keys=True))
-            MyLogger.info('Wrote tuner-config to ' + tuner_cfg)
+            MyLogger_scan.info('Wrote tuner-config to ' + tuner_cfg)
 
         with open(station_cfg, 'w') as f:
             f.write('[' + os.linesep)
@@ -149,7 +163,7 @@ class MuMuTunerScanner(SshHostHandler):
                 f.write(s.serialize() + ',' + os.linesep)
             f.write(self.stations[-1].serialize() + os.linesep)
             f.write(']')
-            MyLogger.info('Wrote station-config to ' + tuner_cfg + '    (' + str(len(self.stations)) + ' stations)')
+            MyLogger_scan.info('Wrote station-config to ' + tuner_cfg + '    (' + str(len(self.stations)) + ' stations)')
 
 
 
@@ -170,7 +184,7 @@ if __name__ == "__main__":
     parser.add_option('-p', '--port', action="store", dest="port", help="SSH: port [default:%default]", default=22)
 
     parser.add_option('-T', '--tuner', action="store", dest="tuner", help="tuner to scan. e.g 0103 = adapter1/frontend3 [default:%default]", default='0000')
-    parser.add_option('-t', '--type', action="store", dest="type", help="dvb-type [default:%default]", default='t')
+    parser.add_option('-t', '--type', action="store", dest="type", help="dvb-type. e.g 't'err., 's'atellite, 'c'able [default:%default]", default='t')
     parser.add_option('-s', '--do_scan', action="store_true", dest="do_scan", help="actually do run w_scan, or just fetch output files")
     options, args = parser.parse_args()
 

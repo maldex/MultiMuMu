@@ -1,9 +1,34 @@
 # -*- coding: utf-8 -*-
+import abc
 from urllib import quote_plus
 from globals import *
 from MuMuStation import MuMuStation
 
-class RenderCLI(object):
+class RenderUI(object):
+    __metaclass__ = abc.ABCMeta
+
+    @abc.abstractmethod
+    def title(self,s): pass
+
+    @abc.abstractmethod
+    def table_begin(self, s): pass
+
+    @abc.abstractmethod
+    def table_entry(self, s): pass
+
+    @abc.abstractmethod
+    def table_end(self, s): pass
+
+    @classmethod
+    def link_tune_to(self, s):
+        assert isinstance(s, MuMuStation)
+        if os.environ.has_key('HTTP_USER_AGENT'):
+            return 'http://' + os.environ['HTTP_HOST'] + '/MuMu_Tune.py?station=' + quote_plus(s.title.encode('utf-8'))
+        else:
+            return 'python MuMu_Tune.py --station "' + s.title + "'"
+
+
+class RenderCLI(RenderUI):
     def __init__(self):
         pass
 
@@ -20,34 +45,8 @@ class RenderCLI(object):
     def table_end(self):
         pass
 
-    def link_tune_to(self,s):
-        if os.environ.has_key('HTTP_USER_AGENT'):
-            return 'http://' + os.environ['HTTP_HOST'] + '/MuMu_Tune.py?station=' + quote_plus(s.title.encode('utf-8'))
-        else:
-            return 'python MuMu_Tune.py --station "' + s.title + "'"
 
-
-class RenderM3U(RenderCLI):
-    def __init__(self):
-        super(self.__class__, self).__init__()
-        if os.environ.has_key('HTTP_USER_AGENT'):
-            print "Content-type:Application/m3u" + os.linesep
-
-    def title(self,s):
-        pass
-
-    def table_begin(self):
-        print '#EXTM3U'
-
-    def table_entry(self,s):
-        assert isinstance(s, MuMuStation)
-        print '#EXTINF:-1,' + s.title
-        print self.link_tune_to(s)
-
-    def table_end(self):
-        pass
-
-class RenderCGI(RenderCLI):
+class RenderCGI(RenderUI):
     def __init__(self):
         super(self.__class__, self).__init__()
         print "Content-type:text/html" + os.linesep
@@ -77,7 +76,7 @@ class RenderCGI(RenderCLI):
         assert isinstance(s, MuMuStation)
         print '  <tr>',
         l = '<a href="' + self.link_tune_to(s) + '">' + 'direct' + '</a>'
-        l2 = '<a href="' + os.environ['SCRIPT_NAME'] + '?format=m3u&pretune=true&bouquet='+ quote_plus(s.title.encode('utf-8'))   + '">' + s.title + '</a>'
+        l2 = '<a href="' + os.environ['SCRIPT_NAME'] + '?format=m3u&bouquet='+ quote_plus(s.title.encode('utf-8'))   + '">' + s.title + '</a>'
         cols = [l2, l, s.get_tuner().ssh.host + '/' + s.get_tuner().tuner, s.freq]
         if s.is_dvbs():
             cols += [ s.dvbs['pol'], s.dvbs['srate'],s.dvbs['diseqc']]
@@ -87,3 +86,26 @@ class RenderCGI(RenderCLI):
 
     def table_end(self):
         print '</table>'
+
+
+class RenderM3U(RenderUI):
+    def __init__(self):
+        super(self.__class__, self).__init__()
+        if os.environ.has_key('HTTP_USER_AGENT'):
+            # print "Content-type:Application/m3u" + os.linesep
+            print "Content-type:audio/x-mpegurl"+os.linesep
+
+
+    def title(self,s):
+        pass
+
+    def table_begin(self):
+        print '#EXTM3U'
+
+    def table_entry(self,s):
+        assert isinstance(s, MuMuStation)
+        print '#EXTINF:-1,' + s.title
+        print self.link_tune_to(s)
+
+    def table_end(self):
+        pass

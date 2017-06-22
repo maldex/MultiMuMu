@@ -22,7 +22,6 @@ class MuMuTuner(object):
         if http_prefix is not None:
             self._http_prefix = http_prefix
 
-
     def _get_my_pid(self):
         try:
             return self.ssh.get_pids('mumudvb', filter=self.conffile)[0]
@@ -114,72 +113,3 @@ class MuMuTuner(object):
             if l.startswith('http://'):
                 cc['sids'].append(int(l.split('/')[-1]))
         return cc
-
-# if __name__ == "__main__":
-#     MyInstance = MuMuTuner('cctv', 'restream', 'asdfasdf', tuner='0100', http_port=8600)
-#     MyInstance.set_config(freq=562000, sids=[3, 2], comment_list=['this is a', 'DVB-S System'])
-#     # MyInstance = MuMu_Tuner('dvb-s', 'user', 'asdfasdf', tuner='0001')
-#     # MyInstance.set_config(freq=12051.0, pol='V', srate=27500, diseqc=0, sids=[20000,20001,20002,20003,20004], comment_list=['DVB-S'])
-#     while not MyInstance.start():
-#         time.sleep(1)
-#
-#     while (MyInstance.get_status() != MuMuTuner.STATUS_SERVING):
-#         print MyInstance.get_current_config()
-#         time.sleep(0.1)
-#
-#     print ".-----------------------------"
-#     print MyInstance.get_current_config()
-    # url ="http://dvb-s:8501/playlist.m3u"
-    # pprint(urllib2.urlopen(url).read().split(os.linesep))
-
-#
-# data = """
-# tuner = 1
-# card = 0
-# port_http = 8001
-#
-# multicast = 0
-# multicast_ipv4 = 0
-# unicast = 1
-# ip_http = 0.0.0.0
-# autoconf_name_template=%name (%lang)
-# autoconfiguration = full
-# sort_eit = 1
-#
-# freq = 11739.0
-# pol = V
-# srate = 27500
-# sat_number = 0
-#
-# # service = 28650 = Data_System_TR_66
-# # service = 28667 = VH1 Classic.
-# # service = 28650 = Data_System_TR_66
-# # service = 28667 = VH1 Classic.
-# autoconf_sid_list =  28650 28667 28650 28667
-# """
-#
-#
-#
-# data = """
-# card = 0
-# tuner = 1
-# freq = 11739.0
-# pol = V
-# srate = 27500
-# sat_number = 0
-#
-# multicast = 0
-# multicast_ipv4 = 0
-# unicast = 1
-# port_http = 8001
-# ip_http = 0.0.0.0
-# autoconf_name_template=%name (%lang)
-#
-# autoconfiguration = full
-# sort_eit = 1
-# # service = 28650 = Data_System_TR_66
-# # service = 28667 = VH1 Classic.
-# # service = 28650 = Data_System_TR_66
-# # service = 28667 = VH1 Classic.
-# autoconf_sid_list =  28650 28667 28650 28667
-# """

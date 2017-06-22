@@ -16,9 +16,9 @@ class _serializable(object):
     def deserialize(self,data):
         try:
             data = json.loads(data)
-        except KeyError:
+        except KeyError: # not a json
             pass
-	    self.__dict__.update(data)
+        self.__dict__.update(data)
 
 class MuMuStation(_serializable):
     def __init__(self):
