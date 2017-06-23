@@ -18,9 +18,11 @@ class MuMuTuner(object):
             MyLogger.error(self.ssh.host + ': tuner ' + tuner + ' not available!')
         self.http_port = http_port
         self.conffile = '/tmp/mumu-' + host + '-' + tuner + '.conf'
-        self._http_prefix = 'http://' + self.ssh.host + ':' + str(self.http_port)
+        self._http_conf = 'http://' + self.ssh.host + ':' + str(self.http_port)
         if http_prefix is not None:
             self._http_prefix = http_prefix
+        else:
+            self._http_prefix = self._http_conf
 
     def _get_my_pid(self):
         try:
@@ -81,7 +83,7 @@ class MuMuTuner(object):
         if self._get_my_pid() == -1:
             return self.STATUS_NA
         try:
-            response = urllib2.urlopen(self._http_prefix + '/monitor/state.xml').read()
+            response = urllib2.urlopen(self._http_conf + '/monitor/state.xml').read()
         except urllib2.URLError:   # internal http not ready yet
             return self.STATUS_STARTING
 
@@ -106,7 +108,7 @@ class MuMuTuner(object):
         cc['sids'] = []
 
         try:
-            response = urllib2.urlopen(self._http_prefix + '/playlist.m3u').read()
+            response = urllib2.urlopen(self._http_conf + '/playlist.m3u').read()
         except urllib2.URLError:   # internal http not ready yet
             return cc
         for l in response.split(os.linesep):

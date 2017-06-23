@@ -11,13 +11,13 @@ class RenderUI(object):
     def title(self,s): pass
 
     @abc.abstractmethod
-    def table_begin(self, s): pass
+    def table_begin(self, titles=[]): pass
 
     @abc.abstractmethod
     def table_entry(self, s): pass
 
     @abc.abstractmethod
-    def table_end(self, s): pass
+    def table_end(self): pass
 
     @classmethod
     def link_tune_to(self, s):
@@ -35,7 +35,7 @@ class RenderCLI(RenderUI):
     def title(self, s):
         print "-= " + s + " =-"
 
-    def table_begin(self):
+    def table_begin(self, titles=[]):
         pass
 
     def table_entry(self,s):
@@ -60,17 +60,12 @@ class RenderCGI(RenderUI):
         m3u_link = m3u_link + 'format=m3u'
         print '<h3> <a href="' + m3u_link + '">' + s + '</a> </h3>' + os.linesep
 
-    def table_begin(self):
+    def table_begin(self, titles=[]):
         print '<table style="width:100%">'
-        print '<tr> ' + \
-              '<td><b>m3u</b></td> ' + \
-              '<td><b>direct</b></td> ' + \
-              '<td><b>host/tuner</b></td> ' + \
-              '<td><b>freq</b></td> ' + \
-              '<td><b>pol</b></td> ' + \
-              '<td><b>srate</b></td> ' + \
-              '<td><b>DiSEqC</b></td> ' + \
-              '</tr>'
+        print '<tr> ',
+        for t in titles:
+            print '<td><b>'+t+'</b></td>',
+        print '</tr>'
 
     def table_entry(self, s):
         assert isinstance(s, MuMuStation)
@@ -99,7 +94,7 @@ class RenderM3U(RenderUI):
     def title(self,s):
         pass
 
-    def table_begin(self):
+    def table_begin(self, titles=[]):
         print '#EXTM3U'
 
     def table_entry(self,s):

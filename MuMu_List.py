@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import os, cgi
+import simplejson as json
 from optparse import OptionParser
 
 from MuMuMasterLib.globals import *
@@ -43,12 +44,32 @@ if __name__ == "__main__":
 
     MyUi.title('List of stations (' + out_bouquet + ')')
 
+    list = []
     preTune = None
-        # types of list
+
+    favorites_file = 'config/favorite.' + out_bouquet + '.json'
+
+    # types of list
     if out_bouquet == 'current':
         list = MyMuMuMasterInstance.get_current_stations()
     elif out_bouquet == 'all':
         list = MyMuMuMasterInstance.stations
+
+    elif os.path.isfile(favorites_file):
+        try:
+            fc = open(favorites_file).read()
+            favorites = json.loads(fc)
+            for f in favorites:
+                s = MyMuMuMasterInstance.get_station_by_name(f)
+                if isinstance(s, MuMuStation):
+                    list.append( s )
+                else:
+                    MyLogger.warn("unknown station '" + f + "' in " + favorites_file)
+        except json.scanner.JSONDecodeError, e:
+            MyLogger.error('could not decode ' + favorites_file)
+
+
+
     else:
         search = MyMuMuMasterInstance.get_station_by_name(out_bouquet)
         if search is None:
@@ -58,7 +79,7 @@ if __name__ == "__main__":
         preTune = search
 
 
-    MyUi.table_begin()
+    MyUi.table_begin(['m3u','direct','host/tuner','freq','pol','srate','DiSEqC'])
     for s in list:
         assert isinstance(s, MuMuStation)
         MyUi.table_entry(s)
