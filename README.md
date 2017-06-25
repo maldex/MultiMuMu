@@ -6,8 +6,15 @@ MuMuMaster manages multipe MuMuDVB instances running against multiple DVB Tuners
 # why
 As our 'Cine S2 DVB-S2 TV Tuner' cannot run along with a 'USB DVB-T HDTV TV Tuner' on the same Linux Host due to driver incomaptibilties, we decided to solve create this
 
-
 # how
+```
+<< HTTP:       user requests: http://MultiMuMu/i_want_to_go?station=MyFavoriteFashion_TV
+XX MultiMuMu:  checks all tuners if already tuned somewhere (e.g. any transponder already has sid)
+XX MultiMuMu:  if not: start a mumudvb instance tuned to MyFavoriteFashion_TV (includes killing any existing instance)
+>> HTTP:       Status: 302 Moved, Location HTTP://192.168.1.6:8000/bysid/2356 (mumudvb stream link)
+```
+
+# architecture
 ```
 +-----------------+
 | Linux Host A    |----+
