@@ -1,17 +1,13 @@
-# MuMuMaster
-Automatic distributed [MuMuDVB|http://mumudvb.net] tuning
-
-MuMuMaster manages multipe MuMuDVB instances running against multiple DVB Tuners, supporting DVB-T and DVB-S, inclusive autoscan (w_scan)
-
-## background
-As our 'Cine S2 DVB-S2 TV Tuner' cannot run along with a 'USB DVB-T HDTV TV Tuner' on the same Linux Host due to driver incomaptibilties, we decided to solve create this
-
-
-
-## prereqirements
+# setup
+## install prereqirements
 ```
 sudo yum install -y python2-simplejson python-xmltodict python-paramiko
+sudo yum install -y httpd mod_evasive   # apache 2.4
+```
 
+## adjust permission
+assuming you cloned this project as 'user'
+```
 sudo setfacl -m u:apache:rX /home/user/
 sudo setfacl -R -m u:apache:rX /home/user/MultiMuMu/
 sudo touch /home/user/MultiMuMu/MultiMuMu.log
@@ -19,8 +15,8 @@ sudo chown apache:user /home/user/MultiMuMu/MultiMuMu.log
 sudo chmod g+w /home/user/MultiMuMu/MultiMuMu.log
 ```
 
-
-### proposal vhost config
+## configure apache/cgi
+Please lock-down your apache yourself, the sample config here just covers a sample vhost config!
 ```
 <VirtualHost *:*>
     DocumentRoot /home/user/MultiMuMu
@@ -51,21 +47,12 @@ sudo chmod g+w /home/user/MultiMuMu/MultiMuMu.log
 </VirtualHost>
 ```
 
+# run a first scan
+see [README.scan.md]
 
-
-<VirtualHost *:80>
-    <Location "/">
-        Require ip 127.0.0.0/8 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16
-    </Location>
-    <IfModule status_module>
-        <Location /server-status>
-            SetHandler server-status
-        </Location>
-    </IfModule>
-    <IfModule proxy_balancer_module>
-        <Location "/balancer-manager">
-            SetHandler balancer-manager
-        </Location>
-    </IfModule>
-    DocumentRoot /var/www/html
-</VirtualHost>
+# operate
+## tail the logs
+```
+sudo tail -fn0 /home/user/MultiMuMu/MultiMuMu.log /var/log/http/*
+```
+and access the vhost via browser
