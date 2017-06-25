@@ -8,6 +8,8 @@ sudo yum install -y httpd mod_evasive   # apache 2.4
 ## adjust permission
 assuming you cloned this project as 'user'
 ```
+sudo mkdir /home/user/MultiMuMu/config
+sudo chown user:user /home/user/MultiMuMu/config
 sudo setfacl -m u:apache:rX /home/user/
 sudo setfacl -R -m u:apache:rX /home/user/MultiMuMu/
 sudo touch /home/user/MultiMuMu/MultiMuMu.log
