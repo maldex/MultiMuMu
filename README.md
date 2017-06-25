@@ -21,13 +21,13 @@ As our 'Cine S2 DVB-S2 TV Tuner' cannot run along with a 'USB DVB-T HDTV TV Tune
 = DVB-S Tuner HW  |    |
 = DVB-S Tuner HW  |
 +-----------------+    |
-
-                       |
+                           + - - - - - - - - - - - +
+                       + - | (Linux Host D)        |
 + - - - - - - - - +
- (Linux Host C)      - +
-|                 |
-= DVB-C Tuner HW
-= DVB-C Tuner HW  |
+ (Linux Host C)      - +   |  DVB-X Tuner Hardware ==== Satellite dish XYZ
+|                 |           DVB-Y Tuner Hardware ==== Antenna ABC (e.g.directional)
+= DVB-C Tuner HW           |  DVB-Z Tuner Hardware ==== Sub-Etha media receiver
+= DVB-C Tuner HW  |        + - - - - - - - - - - - +
 = DVB-X Tuner HW
 + - - - - - - - - +
 ```
