@@ -4,11 +4,11 @@ import os, cgi
 import simplejson as json
 from optparse import OptionParser
 
-from MuMuMasterLib.globals import *
-from MuMuMasterLib.MuMuMaster import MuMuMaster
-from MuMuMasterLib.SshHostHandler import SshHostHandler
-from MuMuMasterLib.MuMuTuner import MuMuTuner
-from MuMuMasterLib.RenderUI import RenderCLI, RenderCGI, RenderM3U
+from MultiMuMuLib.globals import *
+from MultiMuMuLib.MuMuMaster import MuMuMaster
+from MultiMuMuLib.SshHostHandler import SshHostHandler
+from MultiMuMuLib.MuMuTuner import MuMuTuner
+from MultiMuMuLib.RenderUI import RenderCLI, RenderCGI, RenderM3U
 
 
 if __name__ == "__main__":

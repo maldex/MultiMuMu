@@ -4,10 +4,10 @@ import os, cgi
 import simplejson as json
 from optparse import OptionParser
 
-from MuMuMasterLib.globals import *
-from MuMuMasterLib.MuMuStation import MuMuStation
-from MuMuMasterLib.MuMuMaster import MuMuMaster
-from MuMuMasterLib.RenderUI import RenderCLI, RenderCGI, RenderM3U
+from MultiMuMuLib.globals import *
+from MultiMuMuLib.MuMuStation import MuMuStation
+from MultiMuMuLib.MuMuMaster import MuMuMaster
+from MultiMuMuLib.RenderUI import RenderCLI, RenderCGI, RenderM3U
 
 
 if __name__ == "__main__":

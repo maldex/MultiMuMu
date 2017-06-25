@@ -8,7 +8,7 @@ sys.setdefaultencoding('utf-8')
 # MyLogger = logging.getLogger('simple crap')
 # MyLogger.setLevel( logging.DEBUG)
 
-logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s', filename='MuMuMaster.log', level=logging.DEBUG)
+logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s', filename='MultiMuMu.log', level=logging.DEBUG)
 MyLogger = logging.getLogger('mumulib')
 MyLogger.setLevel(logging.DEBUG)
 

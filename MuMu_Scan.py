@@ -7,11 +7,11 @@ from optparse import OptionParser
 
 import xmltodict, os
 
-from MuMuMasterLib.globals import *
-from MuMuMasterLib.MuMuStation import MuMuStation
-from MuMuMasterLib.MuMuTuner import MuMuTuner, SshHostHandler
+from MultiMuMuLib.globals import *
+from MultiMuMuLib.MuMuStation import MuMuStation
+from MultiMuMuLib.MuMuTuner import MuMuTuner, SshHostHandler
 
-######################################################################################################
+############    ##########################################################################################
 
 class StupidLogger(object):
     def _out(self,s):

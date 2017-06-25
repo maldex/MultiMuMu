@@ -3,8 +3,8 @@
 import os, cgi
 from optparse import OptionParser
 
-from MuMuMasterLib.globals import *
-from MuMuMasterLib.MuMuMaster import MuMuMaster
+from MultiMuMuLib.globals import *
+from MultiMuMuLib.MuMuMaster import MuMuMaster
 
 
 if __name__ == "__main__":

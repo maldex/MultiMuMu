@@ -8,29 +8,56 @@ As our 'Cine S2 DVB-S2 TV Tuner' cannot run along with a 'USB DVB-T HDTV TV Tune
 
 
 
+## prereqirements
+```
+sudo yum install -y python2-simplejson python-xmltodict python-paramiko
 
-cd /tmp
-now=`date +%s`
-satellites="S19E2 S13E0"
-for s in ${satellites}; do
-   for d in `seq 0 3`; do
-    echo "`date` --- scanning Sat ${s} - ${d}"
-    w_scan -R0 -E0 -fs -a /dev/dvb/adapter0 -s${s} -D${d}c -L > scan.`hostname`.0000.s.${s}.${d}.xspf 2>> out.${s}.${d}.txt
-    delta=$((`date +%s`-$now)); echo "took: $((${delta}/3600))hrs $((${delta}/60))min $((${delta}%60))sec"
-    sleep 3
-   done
-done
-date
-delta=$((`date +%s`-$now)); echo "total scan time: $((${delta}/3600))hrs $((${delta}/60))min $((${delta}%60))sec"
+sudo setfacl -m u:apache:rX /home/user/
+sudo setfacl -R -m u:apache:rX /home/user/MultiMuMu/
+sudo touch /home/user/MultiMuMu/MultiMuMu.log
+sudo chown apache:users /home/user/MultiMuMu/MultiMuMu.log
+```
 
 
-
-
-
+### proposal vhost config
 ```
 ### default vhost
-<VirtualHost *:80>
+<VirtualHost *:*>
+    DocumentRoot /home/user/MultiMuMu
+    <Directory /home/user/MultiMuMu>
+
+        #Options     +MultiViews +Indexes +IncludesNOEXEC +SymLinksIfOwnerMatch +ExecCGI
+        Options     +ExecCGI
+        Require     all granted
+        Options     +ExecCGI
+        AddHandler  cgi-script .py
+    </Directory>
+
+    # additional: restrict access to private networks
     <Location />
+        Require ip 127.0.0.0/8 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16
+    </Location>
+
+    # additional: Server status module
+    <IfModule status_module>
+        <Location /server-status>
+            SetHandler server-status
+        </Location>
+    </IfModule>
+
+    # additional: Server status module
+    <IfModule proxy_balancer_module>
+        <Location "/balancer-manager">
+            SetHandler balancer-manager
+        </Location>
+    </IfModule>
+</VirtualHost>
+```
+
+
+
+<VirtualHost *:80>
+    <Location "/">
         Require ip 127.0.0.0/8 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16
     </Location>
     <IfModule status_module>
@@ -38,13 +65,10 @@ delta=$((`date +%s`-$now)); echo "total scan time: $((${delta}/3600))hrs $((${de
             SetHandler server-status
         </Location>
     </IfModule>
-    DocumentRoot /home/user/PycharmProjects/MuMuMaster
-    <Directory /home/user/PycharmProjects/MuMuMaster>
-        Options +MultiViews +Indexes +IncludesNOEXEC +SymLinksIfOwnerMatch +ExecCGI
-        Require all     granted
-#        DirectoryIndex  index.py
-        Options +ExecCGI
-        AddHandler cgi-script .py
-    </Directory>
+    <IfModule proxy_balancer_module>
+        <Location "/balancer-manager">
+            SetHandler balancer-manager
+        </Location>
+    </IfModule>
+    DocumentRoot /var/www/html
 </VirtualHost>
-```
