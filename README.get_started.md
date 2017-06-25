@@ -48,7 +48,7 @@ Please lock-down your apache yourself, the sample config here just covers a samp
 ```
 
 # run a first scan
-see [README.scan.md]
+see [README.scan.md](README.scan.md)
 
 # operate
 ## tail the logs
