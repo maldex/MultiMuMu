@@ -52,9 +52,16 @@ Please lock-down your apache yourself, the sample config here just covers a samp
 # run a first scan
 see [README.scan.md](README.scan.md)
 
-# operate
+# run
 ## tail the logs
 ```
 sudo tail -fn0 /home/user/MultiMuMu/MultiMuMu.log /var/log/http/*
 ```
 and access the vhost via browser
+
+# create favorite list 'default'
+a simple list of station titles
+vi config/favorite.default.json
+```
+[ "Fashion TV", "CNN WorldWide"]
+```

@@ -73,7 +73,8 @@ if __name__ == "__main__":
     else:
         search = MyMuMuMasterInstance.get_station_by_name(out_bouquet)
         if search is None:
-            MyLogger.fatal("COULD NOT FIND '" + out_bouquet + "'")
+            MyLogger.critical("COULD NOT FIND '" + out_bouquet + "'")
+            MyLogger.critical("mybe missing '" + favorites_file + "' ?")
             quit()
         list = [search]
         preTune = search

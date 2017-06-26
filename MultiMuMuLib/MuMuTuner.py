@@ -31,8 +31,8 @@ class MuMuTuner(object):
             return -1       # no pid found
 
     def start(self):
-        if self.get_status() not in [self.STATUS_SERVING, self.STATUS_NA]:
-            MyLogger.warn(self.ssh.host + ': state is neither SERVING nor NA, aborting')
+        if self.get_status() not in [self.STATUS_SERVING, self.STATUS_NA, self.STATUS_AUTOCONFIG]:
+            MyLogger.warn(self.ssh.host + ': state is neither SERVING nor NA nor AUTOCONFIG, aborting')
             return False
         self.ssh.kill_pid(self._get_my_pid())
 

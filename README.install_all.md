@@ -1,7 +1,7 @@
 # sample setup against a CentOS(7)/Fedora(25)
 ## some handy yum packets
 ```
-yum install wget mc iptraf-ng
+yum install -y wget mc iptraf-ng usbutils pciutils
 # if CentOS: yum -y install http://li.nux.ro/download/nux/dextop/el7/x86_64/nux-dextop-release-0-5.el7.nux.noarch.rpm
 yum install -y w_scan
 yum install -y vlc dvb-apps

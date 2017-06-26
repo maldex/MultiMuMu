@@ -134,7 +134,7 @@ class MuMuMaster():
                                  diseqc=station.dvbs['diseqc'],
                                  comment_list=comment)
             if not tuner.start():
-                return self.get_500(station)
+                return self.get_302(station)
                 quit()
         else:
             MyLogger.info('already tuned')

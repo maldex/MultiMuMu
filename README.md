@@ -15,7 +15,7 @@ While [MuMuDVB](http://mumudvb.net) does a super-great job at converting DVB-TV 
 MultiMuMu aims to close this bridge while providing a uniform interface among various DVB technologies.
 
 Tuner = Harware that can recveive DVB. it can tune to a certain frequency and filter the selected SID from this transponder
-Assuming you got variuos tuners, one connected to a Satellite Dish to PAKSAT, another tuner with another Dish to Eutelsat, a third one with a terrestial antenna, and maybe a fourth with Cable-TV. In this scenario we end up with four independend settop/TV/PC-Hardware. Asian Channels can only be watched in the Livingroom TV, european channels require switching the cable to the other settop-box, etc.
+Assuming you got variuos tuners, one connected to a Satellite Dish to PAKSAT, another tuner with another Dish to Eutelsat, a third one with a terrestrial antenna, and maybe a fourth with Cable-TV. In this scenario we end up with four independend settop/TV/PC-Hardware. Asian Channels can only be watched in the Livingroom TV, european channels require switching the cable to the other settop-box, etc.
 
 
 

@@ -35,7 +35,7 @@ class MuMuStation(_serializable):
         self.sid = sid
         self.freq = freq
 
-    def __eq__(self, other):
+    def __eq__(self, other, similar=False):
         # ignore SID by purpose - same means same freq, etc
         r = (self.freq == other.freq and \
              self.is_dvbs() == other.is_dvbs())
