@@ -1,0 +1,10 @@
+{
+    "http_port": 8500,
+    "http_prefix": "http://DVBt.T18:8500",
+    "ssh_host": "DVBt.T18",
+    "ssh_pass": "asdfasdf",
+    "ssh_port": 22,
+    "ssh_user": "user",
+    "station_cfg": "config/station.DVBt.json",
+    "tuner": "0000"
+}
