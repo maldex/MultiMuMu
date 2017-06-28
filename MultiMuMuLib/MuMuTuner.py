@@ -8,7 +8,7 @@ class MuMuTuner(object):
     STATUS_STARTING     =   2  # mumudvb started, http interface not ready yet
     STATUS_AUTOCONFIG   =   3  # mumudvb started and serving some
     STATUS_SERVING      =   4  # mumudvb fully ready
-    _TUNE_TIMEOUT       =   20
+    _TUNE_TIMEOUT       =   5
     def __init__(self, host, user=None, password=None, port=22, tuner='0000', http_port = 8500, http_prefix=None):
         self.tuner = tuner
         if user is None:
@@ -30,7 +30,7 @@ class MuMuTuner(object):
         except IndexError:
             return -1       # no pid found
 
-    def start(self):
+    def start(self, check_for_sid=None):
         if self.get_status() not in [self.STATUS_SERVING, self.STATUS_NA, self.STATUS_AUTOCONFIG]:
             MyLogger.warn(self.ssh.host + ': state is neither SERVING nor NA nor AUTOCONFIG, aborting')
             return False
@@ -42,14 +42,22 @@ class MuMuTuner(object):
 
         stime = time.time()
         while self.get_status() not in [self.STATUS_SERVING, self.STATUS_NA, self.STATUS_AUTOCONFIG]:
-            time.sleep(0.33)
+            time.sleep(0.25)
             if time.time() - stime > self._TUNE_TIMEOUT:
                 MyLogger.error( self.ssh.host + ': mumudvb exceeded time to start, aborting')
                 self.ssh.kill_pid(self._get_my_pid())
                 return False
 
-        MyLogger.info(self.ssh.host + ': ' + self.tuner + ' tuned in ' + str(round(time.time() - stime, 1)) + ' secs. http-port: ' + str(self.http_port) + ' pid: ' + str(self._get_my_pid()))
-        return True
+        if isinstance(check_for_sid, int):  # number
+            stime2 = time.time()
+            MyLogger.debug('waiting for sid ' + str(check_for_sid) + ' to appear')
+            while ( time.time() - stime2 < self._TUNE_TIMEOUT ) or ( check_for_sid not in self.get_current_config()['sids']):
+                time.sleep(0.25)
+            MyLogger.info(self.ssh.host + ': ' + self.tuner + ' found sid '+ str(check_for_sid) + ' in ' + str(round(time.time() - stime2, 1)) + ' secs.')
+
+        MyLogger.info(self.ssh.host + ': ' + self.tuner + ' tuned in ' + str(round(time.time() - stime, 1)) + ' secs. pid: ' + str(self._get_my_pid()) + ' ' + self._http_conf)
+
+        return  self.get_status() != self.STATUS_NA
 
     def set_config(self, freq=562000, pol=None, srate=None, diseqc=None, sids=[], comment_list=['blalba']):
         r = ['# auto generated ... will be overwritten soon']
@@ -79,6 +87,8 @@ class MuMuTuner(object):
                 f.write(os.linesep.join(r))
         return r
 
+
+
     def get_status(self):
         if self._get_my_pid() == -1:
             return self.STATUS_NA
@@ -86,6 +96,8 @@ class MuMuTuner(object):
             response = urllib2.urlopen(self._http_conf + '/monitor/state.xml').read()
         except urllib2.URLError:   # internal http not ready yet
             return self.STATUS_STARTING
+        except Exception:    # or socket.error
+            return self.STATUS_NA
 
         self._status_data = xmltodict.parse(response)['mumudvb']
         if self._status_data['autoconfiguration_finished'] == '0':
@@ -95,6 +107,7 @@ class MuMuTuner(object):
 
     def get_current_config(self):
         cc = {}
+        cc['sids'] = []
         if self.get_status() <= self.STATUS_STARTING:
             return cc
 
@@ -104,8 +117,6 @@ class MuMuTuner(object):
             cc['pol'] = self._status_data['frontend_polarization']
             cc['diseqc'] = int(self._status_data['frontend_satnumber'])/1000
             cc['srate'] = int(self._status_data['frontend_symbolrate'])/1000
-
-        cc['sids'] = []
 
         try:
             response = urllib2.urlopen(self._http_conf + '/playlist.m3u').read()

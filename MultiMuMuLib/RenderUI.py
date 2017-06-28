@@ -20,12 +20,15 @@ class RenderUI(object):
     def table_end(self): pass
 
     @classmethod
-    def link_tune_to(self, s):
+    def link_tune_to(self, s, proxy=False):
         assert isinstance(s, MuMuStation)
         if os.environ.has_key('HTTP_USER_AGENT'):
-            return 'http://' + os.environ['HTTP_HOST'] + '/MuMu_Tune.py?station=' + quote_plus(s.title.encode('utf-8'))
+            url = os.environ['REQUEST_SCHEME'] + '://' + os.environ['HTTP_HOST'] + '/MuMu_Tune.py?station=' + quote_plus(s.title.encode('utf-8'))
+            if proxy:
+                url += '&proxy=True'
+            return url
         else:
-            return 'python MuMu_Tune.py --station "' + s.title + "'"
+            return 'python MuMu_Tune.py --station "' + s.title + '"'
 
 
 class RenderCLI(RenderUI):
@@ -49,7 +52,7 @@ class RenderCLI(RenderUI):
 class RenderCGI(RenderUI):
     def __init__(self):
         super(self.__class__, self).__init__()
-        print "Content-type:text/html" + os.linesep
+        print "Content-type: text/html; charset=utf-8" + os.linesep
 
     def title(self, s):
         m3u_link = os.environ['REQUEST_URI']
@@ -71,8 +74,9 @@ class RenderCGI(RenderUI):
         assert isinstance(s, MuMuStation)
         print '  <tr>',
         l = '<a href="' + self.link_tune_to(s) + '">' + 'direct' + '</a>'
+        l3 = '<a href="' + self.link_tune_to(s,proxy=True) + '">' + 'proxy' + '</a>'
         l2 = '<a href="' + os.environ['SCRIPT_NAME'] + '?format=m3u&bouquet='+ quote_plus(s.title.encode('utf-8'))   + '">' + s.title + '</a>'
-        cols = [l2, l, s.get_tuner().ssh.host + '/' + s.get_tuner().tuner, s.freq]
+        cols = [l2, l, l3, s.get_tuner().ssh.host + '/' + s.get_tuner().tuner, s.freq]
         if s.is_dvbs():
             cols += [ s.dvbs['pol'], s.dvbs['srate'],s.dvbs['diseqc']]
         for e in cols:
@@ -88,7 +92,8 @@ class RenderM3U(RenderUI):
         super(self.__class__, self).__init__()
         if os.environ.has_key('HTTP_USER_AGENT'):
             # print "Content-type:Application/m3u" + os.linesep
-            print "Content-type:audio/x-mpegurl"+os.linesep
+            # print "Content-type: audio/x-mpegurl" + os.linesep
+            print "Content-Disposition: attachment; filename=\"MultiMuMu.m3u\"" + os.linesep
 
 
     def title(self,s):
@@ -100,7 +105,7 @@ class RenderM3U(RenderUI):
     def table_entry(self,s):
         assert isinstance(s, MuMuStation)
         print '#EXTINF:-1,' + s.title
-        print self.link_tune_to(s)
+        print self.link_tune_to(s, proxy=True)
 
     def table_end(self):
         pass

@@ -43,6 +43,7 @@ if __name__ == "__main__":
         assert isinstance(t, MuMuTuner)
         print '<h1>Current Tuner</h1>'
         print '<table style="width:100%", border=1>'
+        # print '<tr><td>get_pid()</td><td>' + t.ssh.get_pids()
         for k,v in t.__dict__.iteritems():
             if isinstance(v, SshHostHandler):
                 v = v.user + '@' + v.host + ':' + str(v.port)
@@ -67,6 +68,15 @@ if __name__ == "__main__":
         print "<pre>"
         print open(file,'r').read()
         print "</pre>"
+
+    print '<h1>environment vars</h1>'
+    print '<table border=1>'
+    for k,v in os.environ.iteritems():
+        print '<tr>',
+        print '<td>' + k + '</b>','<td>' + str(v) + '</td>'
+        print '<td></td>'
+        print '</tr>'
+
 
     # MyUi.table_begin()
     # for s in list:

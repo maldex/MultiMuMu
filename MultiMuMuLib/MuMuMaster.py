@@ -56,19 +56,26 @@ class MuMuMaster():
                 return True
         return False
 
-    def get_302_url(self, station):
+    def get_302_url(self, station, proxy=False):
         assert isinstance(station, MuMuStation)
         tuner = station.get_tuner()
         assert isinstance(tuner, MuMuTuner)
-        return tuner._http_prefix + '/bysid/' + str(station.sid)
+        if proxy:
+            return os.environ['REQUEST_SCHEME'] + '://' + os.environ['HTTP_HOST'] + '/' + tuner.ssh.host + '/' + str(station.sid)
+        else:
+            return tuner._http_prefix + '/bysid/' + str(station.sid)
 
-    def get_302(self,station):
-        return "Status: 302 Moved\nLocation: " + self.get_302_url(station) + "\n\n";
+    def get_302(self,station, proxy=False):
+        l = self.get_302_url(station, proxy=proxy)
+        MyLogger.info("answering 302 - " + l)
+        return "Status: 302 Moved\nLocation: " + l + "\n\n";
 
     def get_404(self, station):
+        MyLogger.warn("answering 404 - Not Found")
         return "Status: 404 Not Found\n";
 
     def get_500(self, station):
+        MyLogger.warn("answering 503 - Internal Server Error")
         return "Status: 500 Internal Server Error\n";
 
     def get_station_by_name(self, name):
@@ -107,7 +114,7 @@ class MuMuMaster():
         return r,c
 
 
-    def tune_to(self, station):
+    def tune_to(self, station, proxy=False):
         if not isinstance(station, MuMuStation):
             MyLogger.debug("looking up '" + station + "'")
             station = self.get_station_by_name(station)
@@ -121,6 +128,8 @@ class MuMuMaster():
         MyLogger.debug("found on tuner '" + tuner.tuner + "' on host '" + tuner.ssh.host + "' with sid " + str(
             station.sid) + "/" + str(station.freq))
 
+        r = self.get_302(station, proxy=proxy)   # generate 302 link already here, might become overwritten
+
         if not self.already_tuned(station):
             sids, comment = self.get_same_sids(station)
             MyLogger.info('not yet available, tuning to ' + str(station.freq) + ' with sids ' + str(sids))
@@ -133,11 +142,16 @@ class MuMuMaster():
                                  srate=station.dvbs['srate'],
                                  diseqc=station.dvbs['diseqc'],
                                  comment_list=comment)
-            if not tuner.start():
-                return self.get_302(station)
-                quit()
+            if not tuner.start(check_for_sid=station.sid):
+                MyLogger.error('tuner did not (re)start, retrying')
+                if not tuner.start(check_for_sid=station.sid):
+                    MyLogger.critical('tuner could not start, twice!')
+                    r = self.get_500(station)
+
+
         else:
             MyLogger.info('already tuned')
 
-        return self.get_302(station)
+        MyLogger.debug(r.strip())
+        return r
 

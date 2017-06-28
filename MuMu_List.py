@@ -80,7 +80,7 @@ if __name__ == "__main__":
         preTune = search
 
 
-    MyUi.table_begin(['m3u','direct','host/tuner','freq','pol','srate','DiSEqC'])
+    MyUi.table_begin(['m3u','direct','proxy','host/tuner','freq','pol','srate','DiSEqC'])
     for s in list:
         assert isinstance(s, MuMuStation)
         MyUi.table_entry(s)

@@ -1,0 +1,10 @@
+{
+    "http_port": 8500,
+    "http_prefix": "http://dvb.behind.nat:8500",
+    "ssh_host": "dvb-s.localdomain",
+    "ssh_pass": "<password>",
+    "ssh_port": 22,
+    "ssh_user": "user",
+    "station_cfg": "config/station.DVB-S.json",
+    "tuner": "0000"
+}

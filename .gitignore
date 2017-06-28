@@ -4,3 +4,4 @@ __pycache__/
 .idea/
 *.log
 config/*
+m3u/*.m3u
