@@ -1,7 +1,0 @@
-#EXTM3U
-#EXTINF:-1,NCAM EDI FF
-rtsp://admin:get4free@10.83.6.72:554/ipcam_h264.sdp
-#EXTINF:-1,NCAM TN A4
-rtsp://admin:get4free@10.83.6.74:554/play1.sdp
-#EXTINF:-1,NCAM TN B4
-rtsp://admin:get4free@10.83.6.73:554/play1.sdp
