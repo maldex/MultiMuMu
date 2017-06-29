@@ -1,13 +1,14 @@
 # MuMuMaster
-Automatic distributed [MuMuDVB](http://mumudvb.net) TV tuning. You own multiple linux compatible DVB Tuners connected via IP, this project brings them together into one single 'station dialer'.
-As long as 'w_scan' and 'mumudvb' can find and stream a service it over tcp, just point your favorite player to a specific HTTP url providing automatic tuning and stream-forwarding.
+Automatic distributed [MuMuDVB](http://mumudvb.net) TV tuning. You own multiple linux compatible DVB Tuners connected via TCP/IP, this project brings them together into one single 'station dialer'.
 
-get started [here](README.get_started.md)
+As long as 'w_scan' and 'mumudvb' can find and stream a service, just point your favorite player to a specific HTTP url which will configure mumudvb on the right tuner-host and forward you to the stream.
+
+if you want that, get started [here](README.get_started.md)
 
 # Background
 There are quite a few TV and DVB all in one solutions around, but i couldn't find one that's lightweight and provides me with a single interface to a Station, without all the frequency, technology, userinterfaces or other clutter. No recording or similar, just patchme thorugh the stream (from mumudvb).
 
-I just want a interface like _http://tvbox/station=CNN+WorldWide_ which provides me with the right 302-Moved into the mumudvb. Thus achieving player-independence, making my favorite players ([VLC](http://videolan.org) and [RTSP Player](https://play.google.com/store/apps/details?id=org.rtspplr.app)) just eating a .m3u with my favorite stations. 
+I just want a interface like _http://tvbox/station=CNN+WorldWide_ which provides me with the right 302-Moved into the mumudvb. Thus achieving player-independence, making my favorite players (currently [VLC](http://videolan.org) and [RTSP Player](https://play.google.com/store/apps/details?id=org.rtspplr.app)) just eating a .m3u with my favorite stations. 
 
 As the installation of the [Digital Devices Cine DVB-S2 V6.5](https://www.digital-devices.eu/downloads-www/cine/s/datenblatt_cine_s2_V6_dt.pdf) kernel driver renders the [Zolid Mini DVB-T Stick](https://www.linuxtv.org/wiki/index.php/Zolid_Mini_DVB-T_Stick) unusable (true story, i cannot run them on the same linux same time), i will have two tv-reception-appliances, one for DVB-T, one for DVB-S, so my solution needs to support multiple tuners in multiple linux machines. (no worries, esxi and usb/pci-passthorugh work fine on that old low power PC)
 
