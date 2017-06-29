@@ -1,4 +1,7 @@
 # setup
+This super-quick-guide assumes two machines ['dvb-s','dvb-t'] with appropriate hardware installed.
+These machines find each other by name (though IP would work as well) and have both user 'user' created with 'video' group membership.
+
 ## install prereqirements
 ```
 sudo yum install -y python2-simplejson python-xmltodict python-paramiko
@@ -28,6 +31,23 @@ Please lock-down your apache yourself, the sample config here just covers a samp
         AddHandler  cgi-script .py
     </Directory>
 
+    # additional: a dump for other M3Us
+    <Directory /home/user/MultiMuMu/m3u>
+        Options     +Indexes +ExecCGI
+        Require     all granted
+    </Directory>
+
+    # additional: apache proxy (see exact 302 &proxy=true on tuner)
+    <IfModule proxy_html_module>
+        ProxyPreserveHost  Off
+        ProxyRequests      On
+        ProxyVia           On
+        ProxyPass          /dvb-t    http://dvb-t:8499/bysid retry=0 timeout=5 connectiontimeout=20 flushpackets=on ping=1 ttl=120
+        ProxyPassReverse   /dvb-t    http://dvb-t:8499/bysid
+        ProxyPass          /dvb-s    http://dvb-s:8500/bysid retry=0 timeout=5 connectiontimeout=20 flushpackets=on ping=1 ttl=120
+        ProxyPassReverse   /dvb-s    http://dvb-s:8500/bysid
+    </IfModule>
+
     # additional: restrict access to private networks
     <Location />
         Require ip 127.0.0.0/8 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16
@@ -40,12 +60,6 @@ Please lock-down your apache yourself, the sample config here just covers a samp
         </Location>
     </IfModule>
 
-    # additional: Server status module
-    <IfModule proxy_balancer_module>
-        <Location "/balancer-manager">
-            SetHandler balancer-manager
-        </Location>
-    </IfModule>
 </VirtualHost>
 ```
 

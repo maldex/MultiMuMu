@@ -1,4 +1,5 @@
 # sample setup against a CentOS(7)/Fedora(25)
+install some utilities, devel stuff and finally build MuMuDVB and other tools.
 ## some handy yum packets
 ```
 yum install -y wget mc iptraf-ng usbutils pciutils
@@ -67,7 +68,8 @@ pushd minisapserver-0.3.8
 ./configure && make && make install
 popd
 ```
-## experimental: CAM support
+
+## experimental: CAM support (todo: finish this)
 ```
 yum install -y openssl-devel dialog
 cd /usr/local/src

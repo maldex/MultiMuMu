@@ -11,6 +11,7 @@ from MultiMuMuLib.RenderUI import RenderCLI, RenderCGI, RenderM3U
 
 
 if __name__ == "__main__":
+    MyLogger_log_http_source()
     parser = OptionParser(description="list dvb")
     parser.add_option('-f', '--format', action="store", dest="format", help="display format in 'cli','cgi,'m3u' [default:%default]", default='cli')
     parser.add_option('-b', '--bouquet', action="store", dest="bouquet", help="filter, not yet implemented [default:%default]", default='all')

@@ -8,7 +8,7 @@ class MuMuTuner(object):
     STATUS_STARTING     =   2  # mumudvb started, http interface not ready yet
     STATUS_AUTOCONFIG   =   3  # mumudvb started and serving some
     STATUS_SERVING      =   4  # mumudvb fully ready
-    _TUNE_TIMEOUT       =   5
+    _TUNE_TIMEOUT       =   10
     def __init__(self, host, user=None, password=None, port=22, tuner='0000', http_port = 8500, http_prefix=None):
         self.tuner = tuner
         if user is None:
@@ -51,9 +51,12 @@ class MuMuTuner(object):
         if isinstance(check_for_sid, int):  # number
             stime2 = time.time()
             MyLogger.debug('waiting for sid ' + str(check_for_sid) + ' to appear')
-            while ( time.time() - stime2 < self._TUNE_TIMEOUT ) or ( check_for_sid not in self.get_current_config()['sids']):
+            while ( (time.time() - stime2) < self._TUNE_TIMEOUT ) and ( check_for_sid not in self.get_current_config()['sids']):
                 time.sleep(0.25)
-            MyLogger.info(self.ssh.host + ': ' + self.tuner + ' found sid '+ str(check_for_sid) + ' in ' + str(round(time.time() - stime2, 1)) + ' secs.')
+            if check_for_sid not in self.get_current_config()['sids']:
+                MyLogger.warn("failed to find sid, continuing anyway")
+            else:
+                MyLogger.info(self.ssh.host + ': ' + self.tuner + ' found sid '+ str(check_for_sid) + ' in ' + str(round(time.time() - stime2, 1)) + ' secs.')
 
         MyLogger.info(self.ssh.host + ': ' + self.tuner + ' tuned in ' + str(round(time.time() - stime, 1)) + ' secs. pid: ' + str(self._get_my_pid()) + ' ' + self._http_conf)
 

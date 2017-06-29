@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os, sys, logging, time, paramiko
+from glob import glob
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
@@ -14,4 +15,10 @@ MyLogger.setLevel(logging.DEBUG)
 
 logging.getLogger("paramiko").setLevel(logging.WARNING)
 
-from glob import glob
+def MyLogger_log_http_source():
+    if os.environ.has_key('HTTP_USER_AGENT'):
+        MyLogger.info('HTTP Client: ' + os.environ['REMOTE_ADDR'] + ' (' + os.environ['REMOTE_HOST'] + ')')
+    if os.environ.has_key('HTTP_X_FORWARDED_FOR'):
+        MyLogger.info('HTTP X-For:  ' + os.environ['HTTP_X_FORWARDED_FOR'] + ' via ' + os.environ['HTTP_X_FORWARDED_HOST'])
+
+

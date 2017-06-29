@@ -8,6 +8,7 @@ from MultiMuMuLib.MuMuMaster import MuMuMaster
 
 
 if __name__ == "__main__":
+    MyLogger_log_http_source()
     parser = OptionParser(description="tune dvb")
     parser.add_option('-s', '--station', action="store", dest="station", help="station to tune to [default:%default]", default='prosieben austria')
     parser.add_option('-p', '--proxy', action="store_true", dest="proxy", help="forward to proxy instead of mumudvb direc", default=False)
