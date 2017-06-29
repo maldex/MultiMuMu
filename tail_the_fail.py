@@ -22,10 +22,11 @@ if __name__ == "__main__":
             print l.strip()
     print '</pre>'
 
-    print logfile + ' file size: ' + str( round(os.path.getsize(logfile)/1024.0/1024.0,1) )  + ' MByte'
+    print logfile + ' file size: ' + str( round(os.path.getsize(logfile)/1024.0/1024.0,1) )  + ' MByte        '
 
-    if iteration < iteration_limit:
-        print '<meta http-equiv="refresh" content="1; URL=/logtail.py?iteration=' + str(iteration + 1) + '">'
+    if iteration < iteration_limit and iteration > 0:
+        print '<b> <a href="tail_the_fail.py?iteration=-1">stop</a> </b>'
+        print '<meta http-equiv="refresh" content="1; URL=/tail_the_fail.py?iteration=' + str(iteration + 1) + '">'
     else:
-        print '     <b> <a href="logtail.py">restart logtail again</a> </b>'
+        print '<b> <a href="tail_the_fail.py">start</a> </b>'
     print '</html>'

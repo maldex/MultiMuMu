@@ -74,10 +74,15 @@ class MuMuMaster():
         MyLogger.warn("answering 404 - Not Found")
         return "Status: 404 Not Found\n";
 
-    def get_500(self, station):
+    def get_503(self):
         MyLogger.warn("answering 503 - Internal Server Error")
         return "Status: 500 Internal Server Error\n";
 
+    def get_504(self):
+        MyLogger.warn("answering 504 - Gateway Timeout")
+        return "Status: 504 Gateway Timeout\n";
+
+# 504 Gateway Timeout
     def get_station_by_name(self, name):
         for s in self.stations:
             if s.title.lower() == name.lower():
@@ -146,7 +151,7 @@ class MuMuMaster():
                 MyLogger.error('tuner did not (re)start, retrying')
                 if not tuner.start(check_for_sid=station.sid):
                     MyLogger.critical('tuner could not start, twice!')
-                    r = self.get_500(station)
+                    r = self.get_504()
 
 
         else:

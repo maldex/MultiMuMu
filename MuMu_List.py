@@ -31,7 +31,7 @@ if __name__ == "__main__":
 
     # initialize the right output render class
     if out_format == 'm3u':
-        MyUi = RenderM3U()
+        MyUi = RenderM3U('MultiMuMuDVB.' + out_bouquet + '.m3u')
     elif out_format == 'cgi' or os.environ.has_key('HTTP_USER_AGENT'):
         MyUi = RenderCGI()
     else:
@@ -88,7 +88,6 @@ if __name__ == "__main__":
     MyUi.table_end()
     MyLogger.info("DONE, listed '" + out_bouquet + "' in " + str(round(time.time() - stime, 1)) + " secs")
 
-    print
     if preTune is not None and out_pretune:
         assert isinstance(preTune, MuMuStation)
         MyLogger.info('m3u and direct station: assuming pre-tune')

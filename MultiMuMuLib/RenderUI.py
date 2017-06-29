@@ -88,12 +88,12 @@ class RenderCGI(RenderUI):
 
 
 class RenderM3U(RenderUI):
-    def __init__(self):
+    def __init__(self, filename='MultiMuMu.m3u'):
         super(self.__class__, self).__init__()
         if os.environ.has_key('HTTP_USER_AGENT'):
             # print "Content-type:Application/m3u" + os.linesep
             # print "Content-type: audio/x-mpegurl" + os.linesep
-            print "Content-Disposition: attachment; filename=\"MultiMuMu.m3u\"" + os.linesep
+            print 'Content-Disposition: attachment; filename="' + filename + '"' + os.linesep
 
 
     def title(self,s):
@@ -102,10 +102,10 @@ class RenderM3U(RenderUI):
     def table_begin(self, titles=[]):
         print '#EXTM3U'
 
-    def table_entry(self,s):
+    def table_entry(self,s,proxy=True):
         assert isinstance(s, MuMuStation)
         print '#EXTINF:-1,' + s.title
-        print self.link_tune_to(s, proxy=True)
+        print self.link_tune_to(s, proxy=proxy)
 
     def table_end(self):
         pass
