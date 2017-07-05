@@ -13,7 +13,7 @@ Many WebTV (internet browser based player) require their own client software, ei
 
 DVB in contrast is usually MPEG2 or H264. Encodings for which there's hardware around for more than ten years, and in the meanwhile it's embedded in your CPU, not only on your desktop but also in your Mobile Phone! The super-fast-super-powersaver-just-for-this-purpose-hardware is right in your hands already, WebTV in contrast just uses the main cpu core, no further acceleration. Like the times when DVD just came around and no-one had the PC-Power to watch a movie. (unless you bought a accelerated grafics ...)
 
-in short: watch WebTV for two hours, watch DVB for four hours, with no playback device running hot, no hickups, no buffering, no constant change of quality, but with classic subtitles in teletext, with mutliple languages (if station provides), just like you're used to it from the TV Device. (do keep in mind the _constant_ bandwith. Here, i measure DVB-T ~1Mbit and DVB-S ~4Mbit, ~8Mbit for HD/h264 from Astra)
+in short: watch WebTV for almost two hours on one battery charge, watch DVB for six hours, with no playback device running hot, no hickups, no buffering, no constant change of quality, but with classic subtitles in teletext, with mutliple languages (if station provides), just like you're used to it from the TV Device. (do keep in mind the _constant_ bandwith. Here, i measure DVB-T ~1Mbit and DVB-S ~4Mbit, ~8Mbit for HD/h264 from Astra)
 
 # Background
 There are quite a few TV and DVB all in one solutions around, but i couldn't find one that's lightweight and provides me with a single interface to a Station, without all the frequency, technology, userinterfaces or other clutter. No recording or similar, just patch me thorugh to the stream.
