@@ -8,23 +8,6 @@ Just feed your favorite PC/iPhone/Android/raspi/SmartTV/MPEG2 or h264-http-capab
 
 If you want that, get started [here](README.get_started.md)
 
-# why, in the times of WebTV?
-Many WebTV (internet browser based player) require their own client software, either as app or through a browser-insance (usually some flash-player or html5 like youtube). While achieving some playback through 'any' internet connection with dynamic bandwith, they all run in user-space and are nowhere near being accelerated than though the main CPU logic. Watching web-tv just makes most browsers heavy-letargic, eats a crap load of cpu-power and therefore kills any battery sooner than necessary. (not to mention internet bandwith if multiple people watch the same programme, e.g. sport events) 
-
-DVB in contrast is usually MPEG2 or H264. Encodings for which there's hardware around for more than ten years, and in the meanwhile it's embedded in your CPU, not only on your desktop but also in your Mobile Phone! The super-fast-super-powersaver-just-for-this-purpose-hardware is right in your hands already, WebTV in contrast just uses the main cpu core, no further acceleration. Like the times when DVD just came around and no-one had the PC-Power to watch a movie. (unless you bought a accelerated grafics ...)
-
-in short: watch WebTV for almost two hours on one battery charge, watch DVB for six hours, with no playback device running hot, no hickups, no buffering, no constant change of quality, but with classic subtitles in teletext, with mutliple languages (if station provides), just like you're used to it from the TV Device. (do keep in mind the _constant_ bandwith. Here, i measure DVB-T ~1Mbit and DVB-S ~4Mbit, ~8Mbit for HD/h264 from Astra)
-
-# Background
-There are quite a few TV and DVB all in one solutions around, but i couldn't find one that's lightweight and provides me with a single interface to a Station, without all the frequency, technology, userinterfaces or other clutter. No recording or similar, just patch me thorugh to the stream.
-
-I just want a interface like _http://tvbox/station=CNN+WorldWide_ which provides me with the right 302-Moved into the mumudvb. Thus achieving player-independence, making my favorite players (currently [VLC](http://videolan.org) and [RTSP Player](https://play.google.com/store/apps/details?id=org.rtspplr.app)) just eating a .m3u with my favorite stations. 
-
-As the installation of the [Digital Devices Cine DVB-S2 V6.5](https://www.digital-devices.eu/downloads-www/cine/s/datenblatt_cine_s2_V6_dt.pdf) kernel driver renders the [Zolid Mini DVB-T Stick](https://www.linuxtv.org/wiki/index.php/Zolid_Mini_DVB-T_Stick) unusable (true story, i cannot run them on the same linux same time), i will have two tv-reception-appliances, one for DVB-T, one for DVB-S, so my solution needs to support multiple tuners in multiple linux machines. (no worries, esxi and usb/pci-passthorugh work fine on that old low power PC)
-
-Upon a Station selection, MultiMuMuDVB uses SSH to login to linux/kernel-dvb hosts, stops any previous mumudvb instances, creates a new config file and restarts mumudvb.
-
-
 ## simplified
 ```
 << HTTP:       user requests: http://MultiMuMu/i_want_to_go?station=MyFavoriteFashion_TV
@@ -35,7 +18,7 @@ XX MultiMuMu:  else: login to appropriate tuner-linux and start a mumudvb instan
 ```
 This, depending on the speed mumudvb can tune on the specific hardware, takes between 0.3 and 15 seconds, while the 302-Move is delayed until mumudvb can serve via http.
 
-# architecture
+## architecture
 ```
 +-----------------+
 | Linux Host A    |----+
@@ -59,11 +42,26 @@ This, depending on the speed mumudvb can tune on the specific hardware, takes be
 = DVB-X Tuner HW
 + - - - - - - - - +
 ```
+# why, in the times of WebTV?
+Many WebTV (internet browser based player) require their own client software, either as app or through a browser-insance (usually some flash-player or html5 like youtube). While achieving some playback through 'any' internet connection with dynamic bandwith, they all run in user-space and are nowhere near being accelerated than though the main CPU logic. Watching web-tv just makes most browsers heavy-letargic, eats a crap load of cpu-power and therefore kills any battery sooner than necessary. (not to mention internet bandwith if multiple people watch the same programme, e.g. sport events) 
 
-## proxying
+DVB in contrast is usually MPEG2 or H264. Encodings for which there's hardware around for more than ten years, and in the meanwhile it's embedded in your CPU, not only on your desktop but also in your Mobile Phone! The super-fast-super-powersaver-just-for-this-purpose-hardware is right in your hands already, WebTV in contrast just uses the main cpu core, no further acceleration. Like the times when DVD just came around and no-one had the PC-Power to watch a movie. (unless you bought a accelerated grafics ...)
+
+in short: watch WebTV for almost two hours on one battery charge, watch DVB for six hours, with no playback device running hot, no hickups, no buffering, no constant change of quality, but with classic subtitles in teletext, with mutliple languages (if station provides), just like you're used to it from the TV Device. (do keep in mind the _constant_ bandwith. Here, i measure DVB-T ~1Mbit and DVB-S ~4Mbit, ~8Mbit for HD/h264 from Astra)
+
+## Background
+There are quite a few TV and DVB all in one solutions around, but i couldn't find one that's lightweight and provides me with a single interface to a Station, without all the frequency, technology, userinterfaces or other clutter. No recording or similar, just patch me thorugh to the stream.
+
+I just want a interface like _http://tvbox/station=CNN+WorldWide_ which provides me with the right 302-Moved into the mumudvb. Thus achieving player-independence, making my favorite players (currently [VLC](http://videolan.org) and [RTSP Player](https://play.google.com/store/apps/details?id=org.rtspplr.app)) just eating a .m3u with my favorite stations. 
+
+As the installation of the [Digital Devices Cine DVB-S2 V6.5](https://www.digital-devices.eu/downloads-www/cine/s/datenblatt_cine_s2_V6_dt.pdf) kernel driver renders the [Zolid Mini DVB-T Stick](https://www.linuxtv.org/wiki/index.php/Zolid_Mini_DVB-T_Stick) unusable (true story, i cannot run them on the same linux same time), i will have two tv-reception-appliances, one for DVB-T, one for DVB-S, so my solution needs to support multiple tuners in multiple linux machines. (no worries, esxi and usb/pci-passthorugh work fine on that old low power PC)
+
+Upon a Station selection, MultiMuMuDVB uses SSH to login to linux/kernel-dvb hosts, stops any previous mumudvb instances, creates a new config file and restarts mumudvb.
+
+# proxying
 Yes, it's possible to paste all streams through apaches's mod_proxy, making your antennae network reachable from outside your private network. But won't apache explode after watching for too long?
 
-## Experience
+# Experience
 See the config-examples for details, actually tuning into a station via DVB-T takes around 5 secs (hard to test, only one transponder here), and between 5 to 15 seconds for DVB-S (with diseqc equipment pointed somewhere S13E0 and S19E2).
 
 Do not neglect bandwidth, we're talking raw steady-quality TV, not some overblown, all-self-adjusting youtube- or web-stream. If your network can't handle the incoming DVB-data, the quality will not be lowered but the player will stuck. No quality resizing, but your playback device can use hardware encryption and your battery will run for hours (unlike some internet-tv apps which constantly trying to adjust the stream and fall eventually minutes behind 'live')
