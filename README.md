@@ -1,5 +1,5 @@
 # MultiMuMu
-Automatic distributed [MuMuDVB](http://mumudvb.net) TV tuning. You own multiple linux compatible DVB Tuners, somehow connected via TCP/IP, this project brings them together into one single 'station dialer'. Just point your favorite player to a specific HTTP url which will configure mumudvb on the right tuner-host and forward you to the stream. Point your player to [http://MultiMuMu/station=CNN+WorldWide]
+Automatic distributed [MuMuDVB](http://mumudvb.net) TV tuning. You own multiple linux compatible DVB Tuners, somehow connected via TCP/IP, this project brings them together into one single 'station dialer'. Just point your favorite player [http://MultiMuMu/station=CNN+WorldWide], and get CNN. 
 
 MultiMuMu is merely a set of python/cgi scripts that can SSH to the host w/ right dvb tuner, place a specific MuMuDVB configuration file there, kill and relaunch MuMuDVB there, and return you a 302-Moved code pointing to that host's mumudvb instance. (among some .m3u and simple list functionality)
 
