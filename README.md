@@ -66,5 +66,5 @@ See the config-examples for details, actually tuning into a station via DVB-T ta
 
 Do not neglect bandwidth, we're talking raw steady-quality TV, not some overblown, all-self-adjusting youtube- or web-stream. If your network can't handle the incoming DVB-data, the quality will not be lowered but the player will stuck. No quality resizing, but your playback device can use hardware encryption and your battery will run for hours (unlike some internet-tv apps which constantly trying to adjust the stream and fall eventually minutes behind 'live')
 
-Also there's no locking (yet), so 'stealing' the tuner does lead into a dead-lock situation
+Also there's no locking (yet), so multiple players trying to reconnect to stations on different frequencies does lead into a dead-lock situation
 
