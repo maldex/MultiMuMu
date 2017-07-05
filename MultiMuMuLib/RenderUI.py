@@ -91,8 +91,7 @@ class RenderM3U(RenderUI):
     def __init__(self, filename='MultiMuMu.m3u'):
         super(self.__class__, self).__init__()
         if os.environ.has_key('HTTP_USER_AGENT'):
-            # print "Content-type:Application/m3u" + os.linesep
-            # print "Content-type: audio/x-mpegurl" + os.linesep
+            print 'Content-type: audio/x-mpegurl'
             print 'Content-Disposition: attachment; filename="' + filename + '"' + os.linesep
 
 
