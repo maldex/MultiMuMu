@@ -22,23 +22,23 @@ This, depending on the speed mumudvb can tune on the specific hardware, takes be
 ```
 +-----------------+
 | Linux Host A    |----+
-|                 |    |   +----------------------------------------+
-= DVB-T Tuner HW  |    +---| MultiMuMu Auto Tuner (Linux/apache?)   |
-+-----------------+    |   | <- SSH to Tuner-HW hosts exec mumudvb  |
-                       |   | -> HTTP/m3u user iface w/ 302 redirect |
-+-----------------+    |   +----------------------------------------+
+|                 |    |    +----------------------------------------+
+= DVB-T Tuner HW  |    +----| MultiMuMu Auto Tuner (Linux/apache?)   |
++-----------------+    |    | <- SSH to Tuner-HW hosts exec mumudvb  |
+                       |    | -> HTTP/m3u user iface w/ 302 redirect |
++-----------------+    |    +----------------------------------------+
 | Linux Host B    |----+
 |                 |
 = DVB-S Tuner HW  |    |
 = DVB-S Tuner HW  |
 +-----------------+    |
-                           + - - - - - - - - - - - +
-                       + - | (Linux Host D)        |
-+ - - - - - - - - +
- (Linux Host C)      - +   |  DVB-X Tuner Hardware ==== Satellite dish XYZ
-|                 |           DVB-Y Tuner Hardware ==== Antenna ABC (e.g.directional)
-= DVB-C Tuner HW           |  DVB-Z Tuner Hardware ==== Sub-Etha media receiver
-= DVB-C Tuner HW  |        + - - - - - - - - - - - +
+                            + - - - - - - - - +
+                       + - -| (Linux Host D)  |
++ - - - - - - - - + 
+ (Linux Host C)      - +    |  DVB-X Tuner HW === Satellite dish XYZ
+|                 |            DVB-Y Tuner HW === Antenna ABC (e.g.directional)
+= DVB-C Tuner HW            |  DVB-Z Tuner HW === Sub-Etha media receiver
+= DVB-C Tuner HW  |         + - - - - - - - - +
 = DVB-X Tuner HW
 + - - - - - - - - +
 ```
