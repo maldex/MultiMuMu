@@ -26,7 +26,7 @@ Please lock-down your apache yourself, the sample config here just covers a samp
 <VirtualHost *:*>
     DocumentRoot /home/user/MultiMuMu
     <Directory /home/user/MultiMuMu>
-        Options     +ExecCGI
+        Options     -Indexes +ExecCGI
         Require     all granted
         AddHandler  cgi-script .py
     </Directory>

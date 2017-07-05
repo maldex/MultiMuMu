@@ -1,12 +1,20 @@
-# MuMuMaster
-Automatic distributed [MuMuDVB](http://mumudvb.net) TV tuning. You own multiple linux compatible DVB Tuners connected via TCP/IP, this project brings them together into one single 'station dialer'.
+# MultiMuMu
+Automatic distributed [MuMuDVB](http://mumudvb.net) TV tuning. You own multiple linux compatible DVB Tuners, somehow connected via TCP/IP, this project brings them together into one single 'station dialer'. Just point your favorite player to a specific HTTP url which will configure mumudvb on the right tuner-host and forward you to the stream. Point your player to [http://MultiMuMu/station=CNN+WorldWide]
 
-As long as 'w_scan' and 'mumudvb' can find and stream a service, just point your favorite player to a specific HTTP url which will configure mumudvb on the right tuner-host and forward you to the stream.
+MultiMuMu is merely a set of python/cgi scripts that can SSH to the host w/ right dvb tuner, place a specific MuMuDVB configuration file there, kill and relaunch MuMuDVB there, and return you a 302-Moved code pointing to that host's mumudvb instance. (among some .m3u and simple list functionality)
+In contrast to [HTPC](https://en.wikipedia.org/wiki/Home_theater_PC) solutions, MultiMuMu aims to be targeted by _simple_ players just following a http-url and stream it's content.
+Just feed your favorite PC/iPhone/Android/raspi/SmartTV/MPEG2 or h264-http-capable-playback-software with the right url, MuMuDVB will tune and point you to there. 
 
-if you want that, get started [here](README.get_started.md)
+If you want that, get started [here](README.get_started.md)
+
+# why, in the times of WebTV?
+Many WebTV (internet browser based player) require their own client software, either as app or through a browser-insance (usually some flash-player or html5 like youtube). While achieving some playback through 'any' internet connection with dynamic bandwith, they all run in user-space and are nowhere near being accelerated than though the main CPU logic. Watching web-tv just makes most browsers heavy-letargic, eats a crap load of cpu-power and therefore kills any battery sooner than necessary. (not to mention internet bandwith if multiple people watch the same programme, e.g. sport events) 
+DVB in contrast is usually MPEG2 or H264. Encodings for which there's hardware around for more than ten years, and in the meanwhile it's embedded in your CPU, not only on your desktop but also in your Mobile Phone! The super-fast-super-powersaver-just-for-this-purpose-hardware is right in your hands already, WebTV in contrast just uses the main cpu core, no further acceleration. Like the times when DVD just came around and no-one had the PC-Power to watch a movie. (unless you bought a accelerated grafics ...)
+
+in short: watch WebTV for two hours, watch DVB for four hours, with no playback device running hot, no hickups, no buffering, no constant change of quality, but with classic subtitles in teletext, with mutliple languages (if station provides), just like you're used to it from the TV Device. (do keep in mind the _constant_ bandwith. Here, i measure DVB-T ~1Mbit and DVB-S ~4Mbit, ~8Mbit for HD/h264 from Astra)
 
 # Background
-There are quite a few TV and DVB all in one solutions around, but i couldn't find one that's lightweight and provides me with a single interface to a Station, without all the frequency, technology, userinterfaces or other clutter. No recording or similar, just patchme thorugh the stream (from mumudvb).
+There are quite a few TV and DVB all in one solutions around, but i couldn't find one that's lightweight and provides me with a single interface to a Station, without all the frequency, technology, userinterfaces or other clutter. No recording or similar, just patch me thorugh to the stream.
 
 I just want a interface like _http://tvbox/station=CNN+WorldWide_ which provides me with the right 302-Moved into the mumudvb. Thus achieving player-independence, making my favorite players (currently [VLC](http://videolan.org) and [RTSP Player](https://play.google.com/store/apps/details?id=org.rtspplr.app)) just eating a .m3u with my favorite stations. 
 
