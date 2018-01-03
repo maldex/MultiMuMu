@@ -17,7 +17,8 @@ logging.getLogger("paramiko").setLevel(logging.WARNING)
 
 def MyLogger_log_http_source():
     if os.environ.has_key('HTTP_USER_AGENT'):
-        MyLogger.info('HTTP Client: ' + os.environ['REMOTE_ADDR'] + ' (' + os.environ['REMOTE_HOST'] + ')')
+        #MyLogger.info('HTTP Client: ' + os.environ['REMOTE_ADDR'] + ' (' + os.environ['REMOTE_HOST'] + ')')
+        MyLogger.info('HTTP Client: ' + os.environ['REMOTE_ADDR'] + ' ')
     if os.environ.has_key('HTTP_X_FORWARDED_FOR'):
         MyLogger.info('HTTP X-For:  ' + os.environ['HTTP_X_FORWARDED_FOR'] + ' via ' + os.environ['HTTP_X_FORWARDED_HOST'])
 
