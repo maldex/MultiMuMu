@@ -3,9 +3,6 @@
 import os,cgi
 
 logfile = 'MultiMuMu.log'
-iteration_limit = 256
-
-
 
 if __name__ == "__main__":
     iteration = 1
@@ -24,9 +21,9 @@ if __name__ == "__main__":
 
     print logfile + ' file size: ' + str( round(os.path.getsize(logfile)/1024.0/1024.0,1) )  + ' MByte        '
 
-    if iteration < iteration_limit and iteration > 0:
+    if iteration > 0:
         print '<b> <a href="tail_the_fail.py?iteration=-1">stop</a> </b>'
-        print '<meta http-equiv="refresh" content="1; URL=/tail_the_fail.py?iteration=' + str(iteration + 1) + '">'
+        print '<meta http-equiv="refresh" content="1; URL=/tail_the_fail.py?iteration=' + str(iteration - 1) + '">'
     else:
         print '<b> <a href="tail_the_fail.py">start</a> </b>'
     print '</html>'
