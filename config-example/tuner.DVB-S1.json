@@ -1,0 +1,11 @@
+{
+    "http_port": 8501,
+    "http_prefix": null,
+    "ssh_host": "DVB-S1",
+    "ssh_pass": null,
+    "ssh_port": 22,
+    "ssh_user": "user",
+    "station_cfg": "config/station.DVB-S1.json",
+    "tuner": "0001",
+    "cam": null
+}

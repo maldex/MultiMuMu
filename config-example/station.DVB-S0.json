@@ -1,0 +1,7 @@
+[
+{"freq": 11526.0, "dvbs": {"pol": "H", "diseqc": 4, "srate": 29700}, "sid": 14053, "title": "SRF Info HD"},
+
+{"freq": 10971.41, "dvbs": {"pol": "H", "diseqc": 4, "srate": 29700}, "sid": 17201, "title": "SRF 1 HD"},
+{"freq": 10971.41, "dvbs": {"pol": "H", "diseqc": 4, "srate": 29700}, "sid": 17202, "title": "SRF zwei HD"}
+
+]

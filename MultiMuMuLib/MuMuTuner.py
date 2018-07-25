@@ -9,7 +9,7 @@ class MuMuTuner(object):
     STATUS_AUTOCONFIG   =   3  # mumudvb started and serving some
     STATUS_SERVING      =   4  # mumudvb fully ready
     _TUNE_TIMEOUT       =   10
-    def __init__(self, host, user=None, password=None, port=22, tuner='0000', http_port = 8500, http_prefix=None):
+    def __init__(self, host, user=None, password=None, port=22, tuner='0000', http_port = 8500, http_prefix=None, cam=None):
         self.tuner = tuner
         if user is None:
             user = os.environ['USER']
@@ -23,6 +23,7 @@ class MuMuTuner(object):
             self._http_prefix = http_prefix
         else:
             self._http_prefix = self._http_conf
+        self.cam = cam
 
     def _get_my_pid(self):
         try:
@@ -71,6 +72,11 @@ class MuMuTuner(object):
         r += ['#multicast=0','multicast_ipv4=0','unicast=1']
         r += ['sort_eit=1','autoconfiguration=full', 'autoconf_name_template=%name']
         r += ['']
+        r += ['tuning_timeout=5', 'timeout_no_diff=10']
+        r += ['']
+        if self.cam is not None:
+            r += ['cam_support = 1', 'cam_reset_interval = 15', 'cam_number = ' + str(self.cam)]
+        r += ['']
         r += ['freq=' + str(freq) ]
         if pol is not None:
             r += ['pol=' + pol]
@@ -116,7 +122,7 @@ class MuMuTuner(object):
 
         cc['freq'] = float(self._status_data['frontend_frequency'])
         if self._status_data['frontend_system'] == 'DVB-S':
-            cc['freq'] /= 1000
+            # cc['freq'] /= 1000
             cc['pol'] = self._status_data['frontend_polarization']
             cc['diseqc'] = int(self._status_data['frontend_satnumber'])/1000
             cc['srate'] = int(self._status_data['frontend_symbolrate'])/1000

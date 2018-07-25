@@ -24,7 +24,8 @@ class MuMuMaster():
                                    port=tc['ssh_port'],
                                    tuner=tc['tuner'],
                                    http_port=tc['http_port'],
-                                   http_prefix=tc['http_prefix'])
+                                   http_prefix=tc['http_prefix'],
+                                   cam=tc['cam'])
 
             self.tuners.append(t_instance)
 
@@ -91,7 +92,7 @@ class MuMuMaster():
 
     def get_station_by_sid(self, sid, freq):
         for s in self.stations:
-            if s.sid == sid and s.freq == freq:
+            if s.sid == sid: # and s.freq == freq:
                 return s
         return None
 
@@ -101,6 +102,7 @@ class MuMuMaster():
         for t in cc:
             if t.has_key('sids'):
                 for s in t['sids']:
+                    MyLogger.debug("xxx-" + str(s))
                     station = self.get_station_by_sid(s, t['freq'])
                     if station is not None:
                         r.append(station)
