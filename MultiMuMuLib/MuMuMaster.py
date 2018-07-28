@@ -53,7 +53,7 @@ class MuMuMaster():
             if t.get_status() < MuMuTuner.STATUS_AUTOCONFIG:
                 continue
             config = t.get_current_config()
-            if config['freq'] == station.freq and station.sid in config['sids']:
+            if station.sid in config['sids']: # and config['freq'] == station.freq
                 return True
         return False
 

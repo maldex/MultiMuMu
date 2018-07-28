@@ -76,7 +76,7 @@ class RenderCGI(RenderUI):
         l = '<a href="' + self.link_tune_to(s) + '">' + 'direct' + '</a>'
         l3 = '<a href="' + self.link_tune_to(s,proxy=True) + '">' + 'proxy' + '</a>'
         l2 = '<a href="' + os.environ['SCRIPT_NAME'] + '?format=m3u&bouquet='+ quote_plus(s.title.encode('utf-8'))   + '">' + s.title + '</a>'
-        cols = [l2, l, l3, s.get_tuner().ssh.host + '/' + s.get_tuner().tuner, s.freq]
+        cols = [l2, l, l3, s.get_tuner().ssh.host + '/' + s.get_tuner().tuner, s.sid, s.freq]
         if s.is_dvbs():
             cols += [ s.dvbs['pol'], s.dvbs['srate'],s.dvbs['diseqc']]
         for e in cols:
