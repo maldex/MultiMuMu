@@ -1,6 +1,6 @@
 see https://hub.docker.com/r/maldex/my_dvb_toolbox/
 
-h2. Install Docker
+## Install Docker
 ```
 # add docker repo for redhat systems
 cat <<EOF > /etc/yum.repos.d/docker.repo
@@ -23,7 +23,7 @@ systemctl enable docker; systemctl start docker
 usermod -a -G docker user
 ```
 
-h2. pull image and sample config
+## pull image and sample config
 ```
 docker pull maldex/my_dvb_toolbox
 docker inspect maldex/my_dvb_toolbox
