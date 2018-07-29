@@ -25,3 +25,30 @@ sudo rmmod ddbridge dvb_core cxd2099; sudo modprobe ddbridge
 echo "00 02" | sudo tee /sys/class/ddbridge/ddbridge0/redirect
 echo "01 03" | sudo tee /sys/class/ddbridge/ddbridge0/redirect
 ```
+
+```
+Monoblock LNB, Astra & Hotbird
+   | | | |  
+   | | | |    
+   | | | |  
+ +---------+
+ |         |
+ | DiSEqC  |   (EXR2908)
+ |         |
+ +---------+
+   |     | 
+   |     | 
+   |     |   |
+-------------+
+  |         |
+  | C     |||  TAB4 -> CI TAB1 with TechniSat CAM and SRF Access Card
+  | i     |||
+--+ n       |
+|   e     |||  TAB3 -> CI TAB1 with TechniSat CAM and SRF Access Card
+|         |||
+|   S       |
+--+ 6     |||  TAB2 ->  empty
+  | .     |||
+  | 5       |
+  +---------+
+```
