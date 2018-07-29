@@ -1,4 +1,7 @@
 see https://hub.docker.com/r/maldex/my_dvb_toolbox/
+## Attach and Install DVB-Hardware and driver onto the _host_
+- your host-kernel must provide you with a `/dev/dvb` directory.
+- [README.ddbridge.md](README.ddbridge.md) for DigitalDevices Cine S2 v6.5 against Fedora
 
 ## Install Docker
 ```

@@ -130,7 +130,7 @@ COPY    build.out /
 USER    user
  
 # assume persistent storage
-VOLUME  /conf
+VOLUME  /tmp
  
 # assume exposed ports
 EXPOSE  8500:8500
