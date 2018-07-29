@@ -133,7 +133,7 @@ USER    user
 VOLUME  /conf
  
 # assume exposed ports
-EXPOSE  8000:9000
+EXPOSE  8500:8500
  
 # assume standard runtime executable
 CMD     ["/bin/bash"]
