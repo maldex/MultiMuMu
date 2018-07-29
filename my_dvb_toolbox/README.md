@@ -31,7 +31,7 @@ docker inspect maldex/my_dvb_toolbox
 wget -O /tmp/mumu.conf https://raw.githubusercontent.com/maldex/MultiMuMu/master/my_dvb_toolbox/mumudvb-s.conf
 ```
 
-h2. try n run
+## try n run
 ```
 # check if your dvb might work
 docker run -it --rm --device /dev/dvb/ maldex/my_dvb_toolbox mumudvb -l
