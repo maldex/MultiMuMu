@@ -29,4 +29,4 @@ if __name__ == "__main__":
 
     print MyMuMuMasterInstance.tune_to(station, proxy=proxy)
 
-    MyLogger.info("DONE, tuned to '" + station + "' in total " + str(round(time.time() - stime, 1)) + " secs")
+    MyLogger.info("DONE, stream-up of '" + station + "' in total " + str(round(time.time() - stime, 1)) + " secs")

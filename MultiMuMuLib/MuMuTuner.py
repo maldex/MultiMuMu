@@ -9,7 +9,7 @@ class MuMuTuner(object):
     STATUS_AUTOCONFIG   =   3  # mumudvb started and serving some
     STATUS_SERVING      =   4  # mumudvb fully ready
     _TUNE_TIMEOUT       =   10
-    def __init__(self, host, user=None, password=None, port=22, tuner='0000', http_port = 8500, http_prefix=None, cam=None):
+    def __init__(self, host, user=None, password=None, port=22, tuner='0000', http_port = 8500, http_prefix=None, cam=None, container=None):
         self.tuner = tuner
         if user is None:
             user = os.environ['USER']
@@ -24,20 +24,29 @@ class MuMuTuner(object):
         else:
             self._http_prefix = self._http_conf
         self.cam = cam
+        self.container = container
 
     def _get_my_pid(self):
         try:
-            return self.ssh.get_pids('mumudvb', filter=self.conffile)[0]
-        except IndexError:
+            # return self.ssh.get_pids('mumudvb', filter=self.conffile)[0]
+            return int(self.ssh.execute("ps -eo pid,cmd | grep -v grep | grep " + self.conffile + " | sort | head -n1 | awk '{print $1;}'")[0])
+        except ValueError:
             return -1       # no pid found
 
     def start(self, check_for_sid=None):
         if self.get_status() not in [self.STATUS_SERVING, self.STATUS_NA, self.STATUS_AUTOCONFIG]:
             MyLogger.warn(self.ssh.host + ': state is neither SERVING nor NA nor AUTOCONFIG, aborting')
             return False
-        self.ssh.kill_pid(self._get_my_pid())
 
-        cmd = "nohup mumudvb -d -c " + self.conffile + " > /tmp/mumuout-" + self.tuner + ".txt 2>&1 &"
+        while self._get_my_pid() != -1:
+            self.ssh.kill_pid(self._get_my_pid())
+
+
+        cmd = "mumudvb -d -c " + self.conffile + " > /tmp/mumuout-" + self.tuner + ".txt 2>&1 &"
+        if self.container is None:
+            cmd = "nohup " + cmd
+        else:
+            cmd = self.container + " " + cmd
         MyLogger.debug(self.ssh.host + ': running: ' + cmd)
         self.ssh.execute(cmd)
 

@@ -5,3 +5,4 @@ __pycache__/
 *.log
 config/*
 *.m3u
+my_dvb_toolbox/*.out

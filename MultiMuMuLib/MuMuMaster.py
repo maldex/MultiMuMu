@@ -25,7 +25,8 @@ class MuMuMaster():
                                    tuner=tc['tuner'],
                                    http_port=tc['http_port'],
                                    http_prefix=tc['http_prefix'],
-                                   cam=tc['cam'])
+                                   cam=tc['cam'],
+                                   container=tc['container'])
 
             self.tuners.append(t_instance)
 

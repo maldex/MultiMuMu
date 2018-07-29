@@ -13,7 +13,7 @@ RUN     echo "############################# COMPILER IMAGE #####################
 #RUN     dnf upgrade -y && dnf clean all
 RUN     dnf install -y wget tar xz gzip git gcc gcc-c++ make libev libev-devel xz elfutils-libelf-devel mercurial perl-Proc-ProcessTable kernel-devel kernel-headers automake autoconf dh-autoreconf v4l-utils glibc-static libstdc++-static
 #RUN     dnf install -y https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
-#RUN     dnf install -y libdvbcsa-devel
+
  
 # do not use pre-built dvb-apps from distro-mirror, but build from sources. This is required for MuMuDVB's CAM support on fedora.
 RUN     cd /usr/local/src && \
@@ -25,19 +25,34 @@ RUN     cd /usr/local/src && \
         wget -q -O - https://gitweb.gentoo.org/repo/gentoo.git/plain/media-tv/linuxtv-dvb-apps/files/linuxtv-dvb-apps-1.1.1.20100223-perl526.patch | patch -p1 && \
         make && make install && \
         ldconfig   # b/c libdvben50221.so
-         
-RUN     cd /usr/local/src && \
-        git clone https://github.com/braice/MuMuDVB.git && \
-        cd MuMuDVB && \
-        autoreconf -i -f && \
-        ./configure --enable-cam-support --enable-scam-support --enable-android && \
-        make && make install
  
 RUN     cd /usr/local/src && \
         git clone git://git.videolan.org/bitstream.git && \
         cd bitstream && \
         make all && make install
+		
+RUN		cd /usr/local/src && \
+		git clone https://code.videolan.org/videolan/libdvbcsa.git && \
+		cd libdvbcsa && \
+		autoreconf -i -f && \
+		./configure --prefix=/usr && make && make install
+
+####### OSCAM SUPPORT ####### 
+RUN     yum install -y openssl openssl-devel dialog svn pcsc-lite pcsc-lite-devel libusb libusb-devel
+		
+RUN		cd /usr/local/src && \
+		svn checkout http://www.streamboard.tv/svn/oscam/trunk oscam-svn && \
+		cd oscam-svn && \
+		make USE_PCSC=1 USE_LIBUSB=1
          
+RUN		cd /usr/local/src && \
+		git clone https://github.com/gfto/tsdecrypt.git && \
+		cd tsdecrypt && \
+		git submodule init && \
+		git submodule update && \
+		make && make install
+############################# 
+		
 RUN     cd /usr/local/src && \
         git clone https://code.videolan.org/videolan/dvblast.git && \
         cd dvblast && \
@@ -66,7 +81,15 @@ RUN     cd /usr/local/src && \
         tar -Jxf minisapserver-0.3.8.tar.xz && \
         cd minisapserver-*/ && \
         ./configure && make && make install
-         
+			
+RUN		cd /usr/local/src && \
+		ldconfig && \
+        git clone https://github.com/braice/MuMuDVB.git && \
+        cd MuMuDVB && \
+        autoreconf -i -f && \
+        ./configure --enable-cam-support --enable-scam-support --enable-android && \
+        make && make install
+		
 ###
 # Part 2: install but not compile the applications. This leads to a much smaller image
 ###
@@ -76,29 +99,32 @@ RUN     echo "############################# RUNTIME IMAGE ######################
 # copy the whole /usr/local from the previous compiler-image (note the --from)
 COPY    --from=compiler_build /usr/local /usr/local
  
-# include this very file into the image
-COPY    Dockerfile /Dockerfile
- 
 # install runtime libraries
-RUN     dnf install -y v4l-utils libev
+RUN     dnf install -y v4l-utils libev openssl openssl-devel pcsc-lite libusb
  
 # unfortunately, some make's need gcc anyway :(
 RUN     dnf install -y make gcc gcc-c++ cpp glibc-devel glibc-headers kernel-headers
  
 RUN     cd /usr/local/src/dvb-apps && make install && ldconfig
-RUN     cd /usr/local/src/MuMuDVB && make install
+RUN     cd /usr/local/src/libdvbcsa && make install && ldconfig
+RUN		cd /usr/local/src/tsdecrypt && make install
 RUN     cd /usr/local/src/bitstream && make install
 RUN     cd /usr/local/src/dvblast && make install
 RUN     cd /usr/local/src/w_scan-20170107 && make install
 RUN     cd /usr/local/src/w_scan2 && make install
 RUN     cd /usr/local/src/udpxy-*/ && make install
 RUN     cd /usr/local/src/minisapserver-*/ && make install
+RUN     cd /usr/local/src/MuMuDVB && ldconfig && make install
  
 # remove gcc again
 RUN     dnf remove -y make gcc gcc-c++ cpp glibc-devel glibc-headers kernel-headers
  
 # add a runtime user
 RUN     useradd -c "simple user" -g users -G audio,video,cdrom,dialout,lp,tty,games user
+ 
+# include this very file into the image
+COPY    Dockerfile /
+COPY    build.out /
  
 # use this user as default user
 USER    user
