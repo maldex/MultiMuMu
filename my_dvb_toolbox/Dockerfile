@@ -78,7 +78,7 @@ RUN     cd /usr/local/src && \
 #tool;        make all && make install
 #tool;
 #tool;RUN     cd /usr/local/src && \
-#tool;		dnf install -y libev-devel && \
+#tool;        dnf install -y libev-devel && \
 #tool;        git clone https://code.videolan.org/videolan/dvblast.git && \
 #tool;        cd dvblast && \
 #tool;        make all && make install
@@ -110,6 +110,9 @@ RUN     cd /usr/local/src && \
 #tool;        cd minisapserver-*/ && \
 #tool;        ./configure && make && make install
 #tool;
+#tool;RUN     cd /usr/local/src && \
+#tool;        yum install -y wget && \
+#tool;        wget https://dl.bintray.com/tvheadend/fedora/bintray-tvheadend-fedora-4.2-stable.repo
 
 ###
 # OPTIONAL: START OVER AND ONLY RE-INSTALL
@@ -122,7 +125,9 @@ COPY    --from=compiler_build /usr/local /usr/local
  
 # install runtime libraries
 #scam;RUN     dnf install -y openssl-devel pcsc-lite libusb
-#tool;RUN     dnf install -y v4l-utils libev 
+#tool;RUN     dnf install -y v4l-utils libev
+#tool;RUN     mv /usr/local/src/bintray-tvheadend-fedora-4.2-stable.repo /etc/yum.repos.d
+#tool;RUN     dnf search tvheadend # experimental
 
  
 # unfortunately, some make's need gcc anyway :(
@@ -164,7 +169,7 @@ EXPOSE  8500:8500
 CMD     ["/bin/bash"]
  
 ###
-# Part 3: build, verify and use this image
+# RECOMMENDED: HOW TO BUILD AND TEST
 ###
 
 # build mumudvb plain:
