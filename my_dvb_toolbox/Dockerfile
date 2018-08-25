@@ -1,5 +1,5 @@
 # Dockerfile in multiple variants / t-shirt sizing:
-# - as is, with all the #something; comments: very basic compulation without features
+# - as is, with all the #something; comments: very basic compilation without features
 # - removing #something; enable a variant/feature
 
 # see build and test instructions below
