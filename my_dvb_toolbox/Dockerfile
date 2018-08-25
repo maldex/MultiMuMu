@@ -1,10 +1,12 @@
-# try'n'error dockerfile (>=17.05) for mumudvb, dvblast and other headless TV applications
-# mkdir my_dvb_toolbox; cd my_dvb_toolbox; vi Dockerfile
- 
+# Dockerfile in multiple variants / t-shirt sizing:
+# - as is, with all the #something; comments: very basic compulation without features
+# - removing #something; enable a variant/feature
+
+# see build and test instructions below
+
 ###
-# Part 1: install compilers and devel-utils, download and build applications
+# REQUIRED: INSTALL COMPILER, DOWNLOAD AND INSTALL BITS AND PIECES
 ###
- 
 # start from a fedora 28 image
 FROM    fedora:28 AS compiler_build
 RUN     echo "############################# COMPILER IMAGE #################################"
@@ -12,8 +14,6 @@ RUN     echo "############################# COMPILER IMAGE #####################
 # install requirements
 #RUN     dnf upgrade -y && dnf clean all
 RUN     dnf install -y git gcc gcc-c++ make automake autoconf gettext-devel
-
-#RUN     dnf install -y tar xz elfutils-libelf-devel  perl-Proc-ProcessTable kernel-devel kernel-headers dh-autoreconf v4l-utils glibc-static libstdc++-static 
 
 #######
 #  OPTIONAL: CAM SUPPORT 
@@ -41,7 +41,7 @@ RUN     dnf install -y git gcc gcc-c++ make automake autoconf gettext-devel
 #scam;        cd libdvbcsa && \
 #scam;        autoreconf -i -f && \
 #scam;        ./configure --prefix=/usr && make && make install && \
-#scam;		ldconfig   # b/c libdvbcsa.so
+#scam;		  ldconfig   # b/c libdvbcsa.so
 #scam;        #dnf install -y https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm && \
 #scam;        #dnf install -y libdvbcsa-devel
 #scam;
@@ -110,10 +110,9 @@ RUN     cd /usr/local/src && \
 #tool;        cd minisapserver-*/ && \
 #tool;        ./configure && make && make install
 #tool;
-#tool;RUN		/bin/false
-        
+
 ###
-# Part 2: install but not compile the applications. This leads to a much smaller image
+# OPTIONAL: START OVER AND ONLY RE-INSTALL
 ###
 FROM    fedora:28
 RUN     echo "############################# RUNTIME IMAGE #################################"
@@ -121,27 +120,31 @@ RUN     echo "############################# RUNTIME IMAGE ######################
 # copy the whole /usr/local from the previous compiler-image (note the --from)
 COPY    --from=compiler_build /usr/local /usr/local
  
-# install runtime libraries - not t-shirt sized ... :/
-RUN     dnf install -y v4l-utils libev openssl-devel pcsc-lite libusb
+# install runtime libraries
+#scam;RUN     dnf install -y openssl-devel pcsc-lite libusb
+#tool;RUN     dnf install -y v4l-utils libev 
+
  
 # unfortunately, some make's need gcc anyway :(
 RUN     dnf install -y make gcc gcc-c++ cpp glibc-devel glibc-headers kernel-headers
- 
-RUN     test -e /usr/local/src/dvb-apps && cd /usr/local/src/dvb-apps && make install && ldconfig
-RUN     test -e /usr/local/src/libdvbcsa && cd /usr/local/src/libdvbcsa && make install && ldconfig
-RUN     test -e /usr/local/src/MuMuDVB && cd /usr/local/src/MuMuDVB && make install
-RUN     test -e /usr/local/src/tsdecrypt && cd /usr/local/src/tsdecrypt && make install
-RUN     test -e /usr/local/src/bitstream && cd /usr/local/src/bitstream && make install
-RUN     test -e /usr/local/src/dvblast && cd /usr/local/src/dvblast && make install
-RUN     test -e /usr/local/src/w_scan-20170107 && cd /usr/local/src/w_scan-20170107 && make install
-RUN     test -e /usr/local/src/w_scan2 && cd /usr/local/src/w_scan2 && make install
-RUN     test -e /usr/local/src/udpxy-*/ && cd /usr/local/src/udpxy-*/ && make install
-RUN     test -e /usr/local/src/minisapserver-*/ && cd /usr/local/src/minisapserver-*/ && make install
 
- 
+# re-install all the stuff from before
+RUN     test -e /usr/local/src/dvb-apps && cd /usr/local/src/dvb-apps && make install && ldconfig || exit 0
+RUN     test -e /usr/local/src/libdvbcsa && cd /usr/local/src/libdvbcsa && make install && ldconfig || exit 0
+RUN     cd /usr/local/src/MuMuDVB && make install && mumudvb -v
+RUN     test -e /usr/local/src/tsdecrypt && cd /usr/local/src/tsdecrypt && make install || exit 0
+RUN     test -e /usr/local/src/bitstream && cd /usr/local/src/bitstream && make install || exit 0
+RUN     test -e /usr/local/src/dvblast && cd /usr/local/src/dvblast && make install || exit 0
+RUN     test -e /usr/local/src/w_scan-20170107 && cd /usr/local/src/w_scan-20170107 && make install || exit 0
+RUN     test -e /usr/local/src/w_scan2 && cd /usr/local/src/w_scan2 && make install || exit 0
+RUN     test -e /usr/local/src/udpxy-*/ && cd /usr/local/src/udpxy-*/ && make install || exit 0
+RUN     test -e /usr/local/src/minisapserver-*/ && cd /usr/local/src/minisapserver-*/ && make install || exit 0
+
 # remove gcc again
 RUN     dnf remove -y make gcc gcc-c++ cpp glibc-devel glibc-headers kernel-headers
  
+RUN     echo "############################# FINAL STEPS #################################"
+
 # add a runtime user
 RUN     useradd -c "simple user" -g users -G audio,video,cdrom,dialout,lp,tty,games user
  
@@ -163,14 +166,24 @@ CMD     ["/bin/bash"]
 ###
 # Part 3: build, verify and use this image
 ###
-# build the container
-# $ c
- 
-# explore the container. default bash is defined by CMD in dockerfile
-# $ docker run -it --rm my_dvb_toolbox
+
+# build mumudvb plain:
+#     cat Dockerfile.template > Dockerfile;                              time docker build -t my_mumudvb_simple .
+# enable cam/scam support:
+#     sed -r 's_^#(cam|scam);__g' Dockerfile.template > Dockerfile;      time docker build -t my_mumudvb_cam .
+# enable tool but not scam support:
+#     sed -r 's_^#(tool);__g' Dockerfile.template > Dockerfile;          time docker build -t my_mumudvb_tool .
+# enable all support:
+#     sed -r 's_^#(cam|scam|tool);__g' Dockerfile.template > Dockerfile; time docker build -t my_mumudvb_full .
+  
+# simpe compare and test
+# $ docker run -it --rm my_mumudvb_simple /bin/bash
+# $ docker run -it --rm my_mumudvb_full /usr/local/bin/w_scan
+# $ docker run -it --rm my_mumudvb_cam /usr/local/bin/mumudvb
+# $ docker run -it --rm my_mumudvb_tool /usr/local/bin/mumudvb
  
 # run a scan. note the mapped device tree /dev/dvb
-# $ docker run -it --rm --device /dev/dvb/ my_dvb_toolbox w_scan -f s -s S13E0 -D1c
+# $ docker run -it --rm --device /dev/dvb/ my_mumudvb_full w_scan -f s -s S13E0 -D1c
  
 # run a mumudvb instance. Note the mapped device, filesystem and tcp-port
-# $ docker run -it --rm --device /dev/dvb/ --volume ${PWD}/conf:/conf -p 8500:8500 my_dvb_toolbox mumudvb -d -c /conf/test.conf
+# $ docker run -it --rm --device /dev/dvb/ --volume ${PWD}/conf:/conf -p 8500:8500 my_mumudvb_cam mumudvb -d -c /conf/test.conf
