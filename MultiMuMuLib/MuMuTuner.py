@@ -8,7 +8,7 @@ class MuMuTuner(object):
     STATUS_STARTING     =   2  # mumudvb started, http interface not ready yet
     STATUS_AUTOCONFIG   =   3  # mumudvb started and serving some
     STATUS_SERVING      =   4  # mumudvb fully ready
-    _TUNE_TIMEOUT       =   10
+    _TUNE_TIMEOUT       =   17
     def __init__(self, host, user=None, password=None, port=22, tuner='0000', http_port = 8500, http_prefix=None, cam=None, container=None):
         self.tuner = tuner
         if user is None:
@@ -81,10 +81,10 @@ class MuMuTuner(object):
         r += ['#multicast=0','multicast_ipv4=0','unicast=1']
         r += ['sort_eit=1','autoconfiguration=full', 'autoconf_name_template=%name']
         r += ['']
-        r += ['tuning_timeout=5', 'timeout_no_diff=10']
+        r += ['tuning_timeout=5', 'timeout_no_diff=15']
         r += ['']
         if self.cam is not None:
-            r += ['cam_support = 1', 'cam_reset_interval = 15', 'cam_number = ' + str(self.cam)]
+            r += ['cam_support = 1', 'cam_reset_interval = 3', 'cam_number = ' + str(self.cam)]
         r += ['']
         r += ['freq=' + str(freq) ]
         if pol is not None:
@@ -93,6 +93,7 @@ class MuMuTuner(object):
             r += ['srate=' + str(srate)]
         if diseqc is not None:
             r += ['sat_number=' + str(diseqc)]
+            r += ['switch_type=C']
         r += ['autoconf_sid_list=' + ' '.join(str(x) for x in sids) ]
         r += ['']
         r += (str('# '+ x) for x in comment_list)
