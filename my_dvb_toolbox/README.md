@@ -34,14 +34,19 @@ docker inspect maldex/my_dvb_toolbox
 wget -O /tmp/mumu.conf https://raw.githubusercontent.com/maldex/MultiMuMu/master/my_dvb_toolbox/mumudvb-s.conf
 ```
 
+## create image yourself
+```
+docker build -t my_dvb_toolbox .
+```
+
 ## try n run
 ```
 # check if your dvb might work
 docker run -it --rm --device /dev/dvb/ maldex/my_dvb_toolbox mumudvb -l
 
+# invoke w_scan
+docker run -it --rm --device /dev/dvb/ maldex/my_dvb_toolbox w_scan --param_to_wscan
+
 # give it a shot on port 8500
 docker run -it --rm --device /dev/dvb/ --volume /tmp:/tmp -p 8500:8500 maldex/my_dvb_toolbox mumudvb -d -c /tmp/mumu.conf
 ```
-
-
-
