@@ -27,13 +27,13 @@ echo "01 03" | sudo tee /sys/class/ddbridge/ddbridge0/redirect
 ```
 
 ```
-Monoblock LNB, Astra & Hotbird
+Monoblock LNB, Astra(DiSEqC 0) & Hotbird (DiSEqC 1)
    | | | |  
    | | | |    
    | | | |  
  +---------+
  |         |
- | DiSEqC  |   (EXR2908)
+ | EXR2908 |   (DiSEqC Switch)
  |         |
  +---------+
    |     | 
@@ -41,13 +41,13 @@ Monoblock LNB, Astra & Hotbird
    |     |   |
 -------------+
   |         |
-  | C     |||  TAB4 -> CI TAB1 with TechniSat CAM and SRF Access Card
+  | C     |||  TAB1 -> CI TAB1 with TechniSat CAM and SRF Access Card
   | i     |||
 --+ n       |
-|   e     |||  TAB3 -> CI TAB1 with TechniSat CAM and SRF Access Card
+|   e     |||  TAB2 -> CI TAB2 with TechniSat CAM and SRF Access Card
 |         |||
 |   S       |
---+ 6     |||  TAB2 ->  empty
+--+ 6     |||  TAB3 ->  empty
   | .     |||
   | 5       |
   +---------+
