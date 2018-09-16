@@ -60,7 +60,7 @@ docker run -it --rm --device /dev/dvb/    mumudvb:sak    w_scan -f t -a /dev/dvb
 >
 *NOTE*
 - host device-tree _/dev/dvb_ is passed into the container.
-- Consider Docker's stdOut and -Err behaviour when capturing the w_scan out.
+- Mind Docker's stdOut and -Err behaviour when capturing the w_scan out.
 - Image to be run is the _sak_
 > 
 
@@ -77,7 +77,7 @@ docker run -it --rm  --name my_mumu_adapter0 \
 Upon mumudvb startup, try to access [http://host-ip:4212](http://127.0.0.1:4212).
 > 
 *NOTE*
-- If you get a _permission denied_, the configfile could not be accessed from Docker-Daemon. Check your working-directroy for read-permission from group Docker.
+- If you get a _permission denied_, the configfile could not be accessed from Docker-Daemon. Check your working-directroy for read-permission from group docker.
 - _--name_: give this container instance a specific name.
 - _--device_: map only one adapter into this container.
 - _--publish_: map external/host TCP/4212 into Containers TCP/4212.
