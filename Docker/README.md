@@ -19,7 +19,7 @@ Looking at how to wrap-up MuMuDVB into an image, there's a number of parameters 
 
 I ended up with tree variants: One simple just MuMuDVB without any further features, one with CAM/SCAM enabled, and one with 3rd tools like _w_scan_ or _dvblast_.
 
-See the [Dockerfile](Dockerfile) and [docker-build-all.sh](docker-build-all.sh): there are sections commented-out with _`#pattern;`_. In order to build a variant with _cam_ or _tool_ enabled, we simply remove these patterns before build with `sed`. [This is not necessarily a nice way](https://stackoverflow.com/questions/52041227/how-to-deal-with-multiple-variants-of-application-using-same-dockerfile).
+See the [Dockerfile](Dockerfile): there are sections commented-out with _`#pattern;`_. In order to build a variant with _cam_ or _tool_ enabled, we simply remove these patterns before build with `sed`. [This is not necessarily a nice way](https://stackoverflow.com/questions/52041227/how-to-deal-with-multiple-variants-of-application-using-same-dockerfile).
 
 # Build 
 ## build _simple_ (no features, no tools)
