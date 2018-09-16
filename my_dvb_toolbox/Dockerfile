@@ -1,5 +1,5 @@
-# Dockerfile in multiple variants / t-shirt sizing:
-# - as is, with all the #something; comments: very basic compilation without features
+# Dockerfile in multiple variants
+# - as-is, with all the #something; comments: very basic compilation without features
 # - removing #something; enable a variant/feature
 
 # see build and test instructions below
@@ -11,7 +11,7 @@
 FROM    fedora:28 AS compiler_build
 RUN     echo "############################# COMPILER IMAGE #################################"
   
-# install requirements
+# install base and requirements
 #RUN     dnf upgrade -y && dnf clean all
 RUN     dnf install -y git gcc gcc-c++ make automake autoconf gettext-devel
 
@@ -97,7 +97,7 @@ RUN     cd /usr/local/src && \
 #tool;        ./configure && make && make install
 #tool;         
 #tool;RUN     cd /usr/local/src && \
-#tool;		yum install -y wget && \
+#tool;		  yum install -y wget && \
 #tool;        wget http://udpxy.com/download/udpxy/udpxy-src.tar.gz && \
 #tool;        tar -zxf udpxy-src.tar.gz && \
 #tool;        cd udpxy-*/ && \
@@ -129,7 +129,6 @@ COPY    --from=compiler_build /usr/local /usr/local
 #tool;RUN     mv /usr/local/src/bintray-tvheadend-fedora-4.2-stable.repo /etc/yum.repos.d
 #tool;RUN     dnf search tvheadend # experimental
 
- 
 # unfortunately, some make's need gcc anyway :(
 RUN     dnf install -y make gcc gcc-c++ cpp glibc-devel glibc-headers kernel-headers
 
@@ -160,27 +159,25 @@ COPY    Dockerfile /
 USER    user
  
 # assume persistent storage
-VOLUME  /tmp
+VOLUME  /conf
  
 # assume exposed ports
-EXPOSE  8500:8500
+EXPOSE  4212:4212
  
-# assume standard runtime executable
+# assume standard runtime executable to be bash
 CMD     ["/bin/bash"]
  
 ###
 # RECOMMENDED: HOW TO BUILD AND TEST
 ###
 
-# build mumudvb plain:
-#     cat Dockerfile.template > Dockerfile;                              time docker build -t my_mumudvb_simple .
-# enable cam/scam support:
-#     sed -r 's_^#(cam|scam);__g' Dockerfile.template > Dockerfile;      time docker build -t my_mumudvb_cam .
-# enable tool but not scam support:
-#     sed -r 's_^#(tool);__g' Dockerfile.template > Dockerfile;          time docker build -t my_mumudvb_tool .
-# enable all support:
-#     sed -r 's_^#(cam|scam|tool);__g' Dockerfile.template > Dockerfile; time docker build -t my_mumudvb_full .
-  
+# build plain mumudvb
+# $ docker build -t mumudvb:cam    . -f -
+# remove #cam; patterns from Dockerfile, build mumudvb with cam/scam support
+# $ sed -r 's_^#(cam|scam);__g' Dockerfile      | docker build -t mumudvb:cam    . -f -
+# remove #tool; patterns from Dockerfile, build everything (Swiss-Army-Knife)
+# $ sed -r 's_^#(cam|scam|tool);__g' Dockerfile | docker build -t mumudvb:sak    . -f -
+
 # simpe compare and test
 # $ docker run -it --rm my_mumudvb_simple /bin/bash
 # $ docker run -it --rm my_mumudvb_full /usr/local/bin/w_scan
@@ -191,4 +188,4 @@ CMD     ["/bin/bash"]
 # $ docker run -it --rm --device /dev/dvb/ my_mumudvb_full w_scan -f s -s S13E0 -D1c
  
 # run a mumudvb instance. Note the mapped device, filesystem and tcp-port
-# $ docker run -it --rm --device /dev/dvb/ --volume ${PWD}/conf:/conf -p 8500:8500 my_mumudvb_cam mumudvb -d -c /conf/test.conf
+# $ docker run -it --rm --device /dev/dvb/ --volume ${PWD}/conf:/conf -p 4212:4212 my_mumudvb_cam mumudvb -d -c /conf/test.conf
