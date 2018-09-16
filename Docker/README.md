@@ -2,7 +2,7 @@
 Following the request for an [official Docker container](https://github.com/braice/MuMuDVB/issues/197), this is a proposal how to build an Docker image.
 
 Advantages of running MuMuDVB as a container include:
-- Simplified runtime-environment, you don't need a pre-compiled package for your specific Linux Distro and Version.
+- Simplified runtime, you don't need a pre-compiled package for your specific Linux Distro and Version.
 - Simplified building, all that is required to build MuMuDVB will be included into the build-container, you don't need to install gcc on your host Linux.
 
 Things to know when running MuMuDVB as a container include:
@@ -13,7 +13,6 @@ Things to know when running MuMuDVB as a container include:
 Disadvantages when running MuMuDVB inside a container include:
 - Docker might not support UDP well, please report your experiences with your multi- and broadcast scenarios. 
 - http playlist/m3u generation fails as the m3u-streams are addressed with the docker internal ip. However, accessing the streams _bysid/123_ url works fine.
-
 
 # About this proposal
 Looking at how to wrap-up MuMuDVB into an image, there's a number of parameters to be considered. MuMuDVB compiles with more features (such as [CAM](https://en.wikipedia.org/wiki/Conditional-access_module)-support) when the required libraries are found (libdvbcsa in this case), and personally I usually like to have some additional debugging tools inside the Image as well.
@@ -62,6 +61,7 @@ docker run -it --rm --device /dev/dvb/    mumudvb:sak    w_scan -f t -a /dev/dvb
 *NOTE*
 - host device-tree _/dev/dvb_ is passed into the container.
 - Consider Docker's stdOut and -Err behaviour when capturing the w_scan out.
+- Image to be run is the _sak_
 > 
 
 ## run mumudvb
@@ -71,7 +71,7 @@ docker run -it --rm  --name my_mumu_adapter0 \
      --device /dev/dvb/adapter0 \
      --publish 4242:4242 \
      --volume ${PWD}/sample.conf:/mumudvb.conf \
-     maldex/my_dvb_toolbox       mumudvb -d -c /mumudvb.conf
+     mumudvb:simple       mumudvb -d -c /mumudvb.conf
 ```
 Upon mumudvb startup, try to access [http://host-ip:4212](http://127.0.0.1:4212).
 > 
@@ -79,6 +79,7 @@ Upon mumudvb startup, try to access [http://host-ip:4212](http://127.0.0.1:4212)
 - If you get a _permission denied_, the configfile could not be accessed from Docker-Daemon. Check your working-directroy for read-permission from group Docker.
 - _--name_: give this container instance a specific name.
 - _--device_: map only one adapter into this container.
-- _--publish_: map external/host TCP/4212 into Containers TCP/4212
-- _--volume_: map the _sample.conf_ in current directory to _/mumudvb.conf_ in the container 
+- _--publish_: map external/host TCP/4212 into Containers TCP/4212.
+- _--volume_: map the _sample.conf_ in current directory to _/mumudvb.conf_ in the container.
+- Image to be run is the _simple_
 >
