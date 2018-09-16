@@ -1,8 +1,8 @@
 # About MuMuDVB as a Docker container
-Following the request for an [official Docker container](https://github.com/braice/MuMuDVB/issues/197), this is a proposal how to build an Docker image.
+Following the request for an [official Docker container](https://github.com/braice/MuMuDVB/issues/197), this is a proposal how to build a Docker image for [MuMuDVB](http://mumudvb.net).
 
 Advantages of running MuMuDVB as a container include:
-- Simplified runtime, you don't need a pre-compiled package for your specific Linux Distro and Version.
+- Simplified runtime, you don't need a pre-compiled package for your specific Linux distro and version.
 - Simplified building, all that is required to build MuMuDVB will be included into the build-container, you don't need to install gcc on your host Linux.
 
 Things to know when running MuMuDVB as a container include:
@@ -71,7 +71,8 @@ docker run -it --rm  --name my_mumu_adapter0 \
      --device /dev/dvb/adapter0 \
      --publish 4242:4242 \
      --volume ${PWD}/sample.conf:/mumudvb.conf \
-     mumudvb:simple       mumudvb -d -c /mumudvb.conf
+     mumudvb:simple \
+     mumudvb -d -c /mumudvb.conf
 ```
 Upon mumudvb startup, try to access [http://host-ip:4212](http://127.0.0.1:4212).
 > 
