@@ -7,5 +7,6 @@
     "ssh_user": "user",
     "station_cfg": "config/station.DVB-T.json",
     "tuner": "0000",
-    "cam": null
+    "cam": null,
+    "container": "docker run --rm -v /tmp:/tmp --device /dev/dvb/ -p 8499:8499 maldex/my_dvb_toolbox"
 }
