@@ -8,11 +8,11 @@
 # REQUIRED: INSTALL COMPILER, DOWNLOAD AND INSTALL BITS AND PIECES
 ###
 # start from a fedora 28 image
-FROM    fedora:28 AS compiler_build
+FROM    fedora:29 AS compiler_build
 RUN     echo "############################# COMPILER IMAGE #################################"
   
 # install base and requirements
-#RUN     dnf upgrade -y && dnf clean all
+RUN     dnf upgrade -y && dnf clean all
 RUN     dnf install -y git gcc gcc-c++ make automake autoconf gettext-devel
 
 #######
