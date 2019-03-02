@@ -39,6 +39,7 @@ class MuMuTunerScanner(SshHostHandler):
         outfile = '/tmp/scan.' + self.host + '.' + self.tuner + '.' + self.type + '.' + str(sat) + '.' + str(DiSEqC)
         adapter = 'adapter' + str(int(self.tuner[:2]))
         tuner = 'frontend' + str(int(self.tuner[2:]))
+        #cmd = "docker run --rm -v /tmp:/tmp --device /dev/dvb/ mumudvb:sak w_scan -R0 -T1 -O0 -E0 -f" + self.type
         cmd = "w_scan -R0 -T1 -O0 -E0 -f" + self.type
         if DiSEqC is not None:
             cmd += " --diseqc-switch " + str(DiSEqC) + "c"
@@ -127,10 +128,9 @@ class MuMuTunerScanner(SshHostHandler):
             r = (r and self.scan_and_decode_xsfp_to_AM_station( do_scan=do_scan))
 
         if self.type == 's':
-            #for sat in ['S16E0','S20E0','S13E0']:
-            for sat in ['S19E2', 'S13E0', 'S9E0', 'S10E0', 'S16E0', 'S20E0', 'S21E6']:
-#            for sat in ['S13E0','S16E0','S19E2']:
-                for diseqc in range(0, 4):
+            for sat in ['S16E0','S13E0','S19E2']:
+#            for sat in ['S19E2', 'S13E0', 'S9E0', 'S10E0', 'S16E0', 'S20E0', 'S21E6']:
+                for diseqc in [0,1]:
                     b = self.scan_and_decode_xsfp_to_AM_station(sat=sat, DiSEqC=diseqc, do_scan=do_scan)
                     r = (r and b)
                     self.save()
