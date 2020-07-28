@@ -15,7 +15,7 @@ from MultiMuMuLib.MuMuTuner import MuMuTuner, SshHostHandler
 
 class StupidLogger(object):
     def _out(self,s):
-        print s
+        print(s)
     def error(self,s):
         self._out('ERROR:' + s)
     def warn(self, s):
@@ -75,13 +75,13 @@ class MuMuTunerScanner(SshHostHandler):
             with self.get_sftp() as sftp:
                 with sftp.open(outfile, 'r') as f:
                     scan_result_raw = f.read()
-        except Exception, e:
+        except Exception as e:
             MyLogger_scan.error(str(e) + ': ' + outfile)
             return False
 
         try:
             doc = xmltodict.parse(scan_result_raw)
-        except Exception, e:
+        except Exception as e:
             MyLogger_scan.error(str(e) + ': ' + outfile)
             return False
 
@@ -111,11 +111,11 @@ class MuMuTunerScanner(SshHostHandler):
             station = MuMuStation()
             station.init(s_title, s_sid, s_freq)
 
-            if option.has_key('dvb-polarization'):
+            if 'dvb-polarization' in option:
                 station.dvbs_pol(option['dvb-polarization'])
-            if option.has_key('dvb-satno'):
+            if 'dvb-satno' in option:
                 station.dvbs_diseqc(int(option['dvb-satno']))
-            if option.has_key('dvb-srate'):
+            if 'dvb-srate' in option:
                 station.dvbs_srate(int(option['dvb-srate']) / 1000)
 
             self.stations.append(station)
@@ -189,7 +189,7 @@ if __name__ == "__main__":
     options, args = parser.parse_args()
 
     if not options.host :
-        print "use -h"; quit(1)
+        print("use -h"); quit(1)
 
 #######################################################################################################
 
@@ -197,7 +197,7 @@ if __name__ == "__main__":
     MyScanner = MuMuTunerScanner(options.host, options.user, options.passwd, options.port)
     MyScanner.init(tuner=options.tuner, type=options.type)
 
-    print MyScanner.do_it(options.do_scan)
+    print(MyScanner.do_it(options.do_scan))
 
 
 

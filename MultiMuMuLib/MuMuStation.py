@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 import simplejson as json
-from globals import *
-from MuMuTuner import MuMuTuner
+from .globals import *
+from .MuMuTuner import MuMuTuner
 
 class _serializable(object):
     def serialize(self,hr=False):
         r = dict(self.__dict__)
-        for k in r.keys():
+        for k in list(r.keys()):
             if k.startswith('_'):
                 r.pop(k)
         if hr:
@@ -46,7 +46,7 @@ class MuMuStation(_serializable):
         return r
 
     def is_dvbs(self):
-        return self.__dict__.has_key('dvbs')
+        return 'dvbs' in self.__dict__
 
     def __make_dvbs(self):
         if not self.is_dvbs():

@@ -27,12 +27,12 @@ if __name__ == "__main__":
 
     out_format = out_format.lower()
     if out_format not in ['cli','cgi','m3u']:
-        raise(Exception('unknown out_format ' + str(out_format)))
+        raise Exception
 
     # initialize the right output render class
     if out_format == 'm3u':
         MyUi = RenderM3U('MultiMuMuDVB.' + out_bouquet + '.m3u')
-    elif out_format == 'cgi' or os.environ.has_key('HTTP_USER_AGENT'):
+    elif out_format == 'cgi' or 'HTTP_USER_AGENT' in os.environ:
         MyUi = RenderCGI()
     else:
         MyUi = RenderCLI()
@@ -66,7 +66,7 @@ if __name__ == "__main__":
                     list.append( s )
                 else:
                     MyLogger.warn("unknown station '" + f + "' in " + favorites_file)
-        except json.scanner.JSONDecodeError, e:
+        except json.scanner.JSONDecodeError as e:
             MyLogger.error('could not decode ' + favorites_file)
 
 

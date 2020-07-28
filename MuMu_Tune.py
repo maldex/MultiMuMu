@@ -18,7 +18,7 @@ if __name__ == "__main__":
 
     station = cgi_data.getvalue('station') or options.station
     proxy = options.proxy
-    if cgi_data.has_key('proxy'):
+    if 'proxy' in cgi_data:
         proxy = cgi_data.getvalue('proxy').lower() == 'true'
     MyLogger.info("tuning to '" + station + "'     (Proxy:" + str( proxy  ) + ")")
 
@@ -27,6 +27,6 @@ if __name__ == "__main__":
 
     MyMuMuMasterInstance = MuMuMaster()
 
-    print MyMuMuMasterInstance.tune_to(station, proxy=proxy)
+    print(MyMuMuMasterInstance.tune_to(station, proxy=proxy))
 
     MyLogger.info("DONE, stream-up of '" + station + "' in total " + str(round(time.time() - stime, 1)) + " secs")

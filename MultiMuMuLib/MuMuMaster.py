@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import simplejson as json
 from glob import glob
-from globals import *
-from MuMuStation import MuMuStation
-from MuMuTuner import MuMuTuner
+from .globals import *
+from .MuMuStation import MuMuStation
+from .MuMuTuner import MuMuTuner
 
 
 class MuMuMaster():
@@ -101,7 +101,7 @@ class MuMuMaster():
         cc = self.get_tuner_configs()
         r = []
         for t in cc:
-            if t.has_key('sids'):
+            if 'sids' in t:
                 for s in t['sids']:
                     MyLogger.debug("xxx-" + str(s))
                     station = self.get_station_by_sid(s, t['freq'])

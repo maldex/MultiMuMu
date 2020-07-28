@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-import os, sys, time, xmltodict, urllib2
-from globals import *
-from SshHostHandler import SshHostHandler
+import os, sys, time, xmltodict, urllib.request, urllib.error, urllib.parse
+from .globals import *
+from .SshHostHandler import SshHostHandler
 
 class MuMuTuner(object):
     STATUS_NA           =   1  # no process at all
@@ -112,8 +112,8 @@ class MuMuTuner(object):
         if self._get_my_pid() == -1:
             return self.STATUS_NA
         try:
-            response = urllib2.urlopen(self._http_conf + '/monitor/state.xml').read()
-        except urllib2.URLError:   # internal http not ready yet
+            response = urllib.request.urlopen(self._http_conf + '/monitor/state.xml').read()
+        except urllib.error.URLError:   # internal http not ready yet
             return self.STATUS_STARTING
         except Exception:    # or socket.error
             return self.STATUS_NA
@@ -138,8 +138,8 @@ class MuMuTuner(object):
             cc['srate'] = int(self._status_data['frontend_symbolrate'])/1000
 
         try:
-            response = urllib2.urlopen(self._http_conf + '/playlist.m3u').read()
-        except urllib2.URLError:   # internal http not ready yet
+            response = urllib.request.urlopen(self._http_conf + '/playlist.m3u').read()
+        except urllib.error.URLError:   # internal http not ready yet
             return cc
         for l in response.split(os.linesep):
             if l.startswith('http://'):

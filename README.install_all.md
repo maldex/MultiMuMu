@@ -1,32 +1,34 @@
 # sample setup against a CentOS(7)/Fedora(25)
 install some utilities, devel stuff and finally build MuMuDVB and other tools.
-## some handy yum packets
+## some handy dnf packets
 ```
-yum install -y wget mc iptraf-ng usbutils pciutils
-# if CentOS: yum -y install http://li.nux.ro/download/nux/dextop/el7/x86_64/nux-dextop-release-0-5.el7.nux.noarch.rpm
-yum install -y w_scan
-yum install -y vlc dvb-apps
+sudo dnf install -y wget mc iptraf-ng usbutils pciutils
+# if CentOS: dnf -y install http://li.nux.ro/download/nux/dextop/el7/x86_64/nux-dextop-release-0-5.el7.nux.noarch.rpm
+sudo dnf install -y w_scan
+yum install -y vlc
 ```
 
 ## devel stuff
 ```
-yum install -y git gcc gcc-c++ make libev libev-devel xz libdvbcsa-devel
-yum install -y mercurial perl-Proc-ProcessTable kernel-devel kernel-headers automake autoconf dh-autoreconf
-cd /usr/local/src
+sudo dnf install -y git gcc gcc-c++ make libev libev-devel xz libdvbcsa-devel elfutils-libelf-devel openssl-devel dkms
+sudo dnf install -y mercurial perl-Proc-ProcessTable kernel-devel kernel-headers automake autoconf dh-autoreconf 
+sudo dkms add -m v4l2loopback -v 1.1
+sudo dkms build -m v4l2loopback -v 1.1
+sudo dkms install -m v4l2loopback -v 1.1
 ```
 
 ## install DigitalDevices Kernel Driver (if you own such hardware)
 ```
-wget https://github.com/DigitalDevices/dddvb/archive/0.9.29.tar.gz
-tar -zxf 0.9.*.tar.gz
+cd /usr/local/src
+sudo wget -qO - https://github.com/DigitalDevices/dddvb/archive/0.9.37.tar.gz | tar zxvf -
 cd dddvb-0.9.*/
-make && make install
-echo "search extra updates built-in" > /etc/depmod.d/extra.conf
-echo "options ddbridge adapter_alloc=3" > /lib/modprobe.d/ddbridge.conf
-echo "options dvb-core cam_debug=1" >> /lib/modprobe.d/ddbridge.conf
+make && sudo make install
+echo "search extra updates built-in" | sudo tee etc/depmod.d/extra.conf
+echo "options ddbridge adapter_alloc=3" | sudo tee /lib/modprobe.d/ddbridge.conf
+echo "options dvb-core cam_debug=1" | sudo tee -a /lib/modprobe.d/ddbridge.conf
 #options dvb-core cam_debug=1,1 debug=1,1
-depmod -a
-modprobe ddbridge
+sudo depmod -a
+sudo rmmod ddbridge; sudo modprobe ddbridge
 dmesg | grep -i ddbridge
 # reboot
 ```
