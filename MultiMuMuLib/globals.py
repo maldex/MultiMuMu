@@ -4,7 +4,7 @@ import os, sys, logging, time, paramiko
 from glob import glob
 import imp
 imp.reload(sys)
-sys.setdefaultencoding('utf-8')
+#sys.setdefaultencoding('utf-8')
 
 # logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s', filename='AutoMumu.log', level=logging.DEBUG)
 # MyLogger = logging.getLogger('simple crap')
