@@ -15,7 +15,7 @@ class _serializable(object):
 
     def deserialize(self,data):
         try:
-            data = json.loads(str(data))
+            # data = json.loads(data.decode("utf-8"))
             data = data
         except KeyError: # not a json
             pass

@@ -10,7 +10,7 @@ imp.reload(sys)
 # MyLogger = logging.getLogger('simple crap')
 # MyLogger.setLevel( logging.DEBUG)
 
-logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s', filename='/log/MultiMuMu.log', level=logging.DEBUG)
+logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s', filename='./MultiMuMu.log', level=logging.DEBUG)
 MyLogger = logging.getLogger('mumulib')
 MyLogger.setLevel(logging.DEBUG)
 

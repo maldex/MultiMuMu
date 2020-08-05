@@ -2,7 +2,7 @@
     "http_port": 8500,
     "http_prefix": null,
     "ssh_host": "DVB-S0",
-    "ssh_pass": null,
+    "ssh_pass": "MultiMuMu_isC00l",
     "ssh_port": 22,
     "ssh_user": "MultiMuMu",
     "station_cfg": "config/station.DVB-S0.json",

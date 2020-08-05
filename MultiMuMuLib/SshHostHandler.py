@@ -17,11 +17,11 @@ class SshHostHandler(object):
 
     def execute(self, cmd):
         (stdin, stdout, stderr) = self.connection.exec_command(cmd)
-        err = stderr.read()
+        err = stderr.read().decode("utf-8")
         if err != '':
             print((Exception("error while SSHing " + str(err))))
             return []
-        return stdout.read().strip().split(os.linesep)
+        return stdout.read().decode("utf-8").strip().split(os.linesep)
 
     def get_sftp(self):
         r = self.connection.open_sftp()
