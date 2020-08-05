@@ -1,7 +1,7 @@
-# cat Dockerfile.MultiMuMu | docker build -t multimumu:latest . -f -
+# cat Dockerfile.MultiMuMu | docker build --no-cache -t multimumu:latest . -f -
 
 FROM    fedora:32
-RUN     dnf update -y && dnf install -y findutils git python3-pip httpd 
+RUN     dnf install -y findutils git python3-pip httpd 
 
 RUN     pip3 install simplejson xmltodict paramiko
 

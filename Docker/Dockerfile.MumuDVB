@@ -1,4 +1,4 @@
-# $ sed -r 's_^#(cam|scam|tool);__g' Dockerfile | docker build -t mumudvb:sak    . -f -
+# $ sed -r 's_^#(cam|scam|tool);__g' Dockerfile | docker build --no-cache -t mumudvb:sak    . -f -
 
 # Dockerfile in multiple variants
 # - as-is, with all the #something; comments: very basic compilation without features
