@@ -54,7 +54,7 @@ if __name__ == "__main__":
             print('<td></td>')
             print('</tr>')
 
-	print('<tr><td>get_state()</td> <td>'+str(t.get_status())+'</td><td>'+str(t._get_my_pid())+'</td></tr>')
+        print('<tr><td>get_state()</td> <td>'+str(t.get_status())+'</td><td>'+str(t._get_my_pid())+'</td></tr>')
         for k,v in t.get_current_config().items():
             print('<tr><td>get_current_config()</td>', end=' ')
             print('<td>' + k + '</b>','<td>' + str(v) + '</td>')

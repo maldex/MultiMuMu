@@ -23,8 +23,7 @@ RUN     cd / && git clone https://github.com/maldex/MultiMuMu.git
 COPY    Dockerfile.MultiMuMu /
   
 # use this user as default user
-#USER    apache
- 
+
 # assume persistent storage
 VOLUME  /MultiMuMu/config
  
