@@ -2,20 +2,6 @@ h2. based on CentOS 8
 
 export pUser=MultiMuMu
 
-function clone_project() {
-    if ! getent passwd ${pUser}; then
-        useradd -c "MultiMuMu project user" -g users -G tty,dialout,video,audio,sudoers ${pUser}
-        echo "${pUser}-${pUser}" | passwd ${pUser} --stdin
-        su - ${pUser} -c "`which ssh-keygen` -q -N '' -f ~/.ssh/id_rsa -C ${pUser}@`hostname -f`-`date +%Y%m%d-%H%M`"
-        su - ${pUser} -c "ssh-keyscan github.com >> ~/.ssh/known_hosts"
-        echo " ---"
-        cat `getent passwd ${pUser} | cut -d: -f 6`/.ssh/id_rsa.pub
-        echo " ---"
-    fi
-    dnf install -y git
-    su - ${pUser} -c "git clone git@github.com:maldex/MultiMuMu.git"
-    }
-
 function install_docker() {
     echo "    ${FUNCNAME[*]} >> installing Docker"
     dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
@@ -38,9 +24,25 @@ function install_docker() {
     chmod -v +x /usr/bin/docker-compose
 }
 
+function clone_project() {
+    if ! getent passwd ${pUser}; then
+        useradd -c "MultiMuMu project user" -g users -G tty,dialout,video,audio,sudoers ${pUser}
+        echo "${pUser}-${pUser}" | passwd ${pUser} --stdin
+        su - ${pUser} -c "`which ssh-keygen` -q -N '' -f ~/.ssh/id_rsa -C ${pUser}@`hostname -f`-`date +%Y%m%d-%H%M`"
+        su - ${pUser} -c "ssh-keyscan github.com >> ~/.ssh/known_hosts"
+        echo " ---"
+        cat `getent passwd ${pUser} | cut -d: -f 6`/.ssh/id_rsa.pub
+        echo " ---"
+    fi
+    dnf install -y git
+    su - ${pUser} -c "git clone git@github.com:maldex/MultiMuMu.git"
+    }
+
+
 function build_mumudvb_container() {
     pushd `getent passwd ${pUser} | cut -d: -f 6`/MultiMuMu/Docker > /dev/null
-    sed -r 's_^#(cam|scam|tool);__g' Dockerfile | docker build -t mumudvb:sak    . -f -
+    sed -r 's_^#(cam|scam|tool);__g' Dockerfile.MumuDVB | docker build -t mumudvb:sak . -f -
+    cat Dockerfile.MultiMuMu | docker build -t multimumu:latest . -f -
     popd > /dev/null
 }
 

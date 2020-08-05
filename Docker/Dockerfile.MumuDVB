@@ -1,3 +1,5 @@
+# $ sed -r 's_^#(cam|scam|tool);__g' Dockerfile | docker build -t mumudvb:sak    . -f -
+
 # Dockerfile in multiple variants
 # - as-is, with all the #something; comments: very basic compilation without features
 # - removing #something; enable a variant/feature
@@ -7,12 +9,12 @@
 ###
 # REQUIRED: INSTALL COMPILER, DOWNLOAD AND INSTALL BITS AND PIECES
 ###
-# start from a fedora 28 image
-FROM    fedora:29 AS compiler_build
+# start from a fedora 31 image
+FROM    fedora:31 AS compiler_build
 RUN     echo "############################# COMPILER IMAGE #################################"
   
 # install base and requirements
-RUN     dnf upgrade -y && dnf clean all
+#RUN     dnf upgrade -y && dnf clean all
 RUN     dnf install -y git gcc gcc-c++ make automake autoconf gettext-devel
 
 #######
@@ -73,7 +75,7 @@ RUN     cd /usr/local/src && \
 # OPTIONAL: TOOLBOXING
 ####### 
 #tool;RUN     cd /usr/local/src && \
-#tool;        git clone git://git.videolan.org/bitstream.git && \
+#tool;        git clone https://code.videolan.org/videolan/bitstream.git && \
 #tool;        cd bitstream && \
 #tool;        make all && make install
 #tool;
@@ -84,11 +86,9 @@ RUN     cd /usr/local/src && \
 #tool;        make all && make install
 #tool;         
 #tool;RUN     cd /usr/local/src && \
-#tool;        yum install -y wget bzip2 && \
-#tool;        wget http://wirbel.htpc-forum.de/w_scan/w_scan-20170107.tar.bz2 && \
-#tool;        tar -jxf w_scan-20170107.tar.bz2 && \
-#tool;        cd w_scan-20170107/ && \
-#tool;        ./configure && make && make install
+#tool;        git clone https://github.com/Max-T/w_scan.git&& \
+#tool;        cd w_scan/ && \
+#tool;        sh ./configure && make && make install
 #tool;          
 #tool;RUN     cd /usr/local/src && \
 #tool;        git clone https://github.com/stefantalpalaru/w_scan2.git && \
@@ -117,7 +117,7 @@ RUN     cd /usr/local/src && \
 ###
 # OPTIONAL: START OVER AND ONLY RE-INSTALL
 ###
-FROM    fedora:28
+FROM    fedora:31
 RUN     echo "############################# RUNTIME IMAGE #################################"
  
 # copy the whole /usr/local from the previous compiler-image (note the --from)
@@ -139,7 +139,7 @@ RUN     cd /usr/local/src/MuMuDVB && make install && mumudvb -v
 RUN     test -e /usr/local/src/tsdecrypt && cd /usr/local/src/tsdecrypt && make install || exit 0
 RUN     test -e /usr/local/src/bitstream && cd /usr/local/src/bitstream && make install || exit 0
 RUN     test -e /usr/local/src/dvblast && cd /usr/local/src/dvblast && make install || exit 0
-RUN     test -e /usr/local/src/w_scan-20170107 && cd /usr/local/src/w_scan-20170107 && make install || exit 0
+RUN     test -e /usr/local/src/w_scan && cd /usr/local/src/w_scan && make install || exit 0
 RUN     test -e /usr/local/src/w_scan2 && cd /usr/local/src/w_scan2 && make install || exit 0
 RUN     test -e /usr/local/src/udpxy-*/ && cd /usr/local/src/udpxy-*/ && make install || exit 0
 RUN     test -e /usr/local/src/minisapserver-*/ && cd /usr/local/src/minisapserver-*/ && make install || exit 0
@@ -153,7 +153,7 @@ RUN     echo "############################# FINAL STEPS ########################
 RUN     useradd -c "simple user" -g users -G audio,video,cdrom,dialout,lp,tty,games user
  
 # include this very file into the image
-COPY    Dockerfile /
+COPY    Dockerfile.MumuDVB /
  
 # use this user as default user
 USER    user

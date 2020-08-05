@@ -1,0 +1,35 @@
+# cat Dockerfile.MultiMuMu | docker build -t multimumu:latest . -f -
+
+FROM    fedora:32
+COPY    apache.functions.sh ./
+RUN     dnf update -y && dnf install -y findutils git python3-pip httpd 
+RUN     source ./apache.functions.sh && \
+            apache_install_all && \
+            apache_minimum_modules
+
+RUN     mv /etc/httpd/conf/httpd.conf /etc/httpd/conf/httpd.conf.distro
+
+COPY    httpd.conf /etc/httpd/conf/httpd.conf 
+
+RUN     chown -R root:apache /etc/httpd
+
+RUN     mkdir /log && chown apache:apache /log
+
+RUN     cd / && git clone https://github.com/maldex/MultiMuMu.git
+
+COPY    Dockerfile.MultiMuMu /
+  
+# use this user as default user
+#USER    apache
+ 
+# assume persistent storage
+VOLUME  /MultiMuMu/config
+ 
+# assume exposed ports
+EXPOSE  80:80
+ 
+# assume standard runtime executable to be bash
+CMD     ["/usr/sbin/httpd","-DFOREGROUND"]
+
+
+# 
