@@ -1,4 +1,9 @@
 [
+{"freq": 11973.0, "dvbs": {"pol": "V", "diseqc": 0, "srate": 27500}, "sid": 28678, "title": "MTV"},
+{"freq": 11973.0, "dvbs": {"pol": "V", "diseqc": 0, "srate": 27500}, "sid": 28676, "title": "Comedy Central"},
+{"freq": 11973.0, "dvbs": {"pol": "V", "diseqc": 0, "srate": 27500}, "sid": 28680, "title": "NICK/MTV+"},
+
+
 {"freq": 11038.0, "dvbs": {"pol": "V", "diseqc": 0, "srate": 22000}, "sid": 30400, "title": "M. ESTRENOS"},
 {"freq": 11038.0, "dvbs": {"pol": "V", "diseqc": 0, "srate": 22000}, "sid": 30402, "title": "MULTIDEP. 6"},
 {"freq": 11038.0, "dvbs": {"pol": "V", "diseqc": 0, "srate": 22000}, "sid": 30403, "title": "DISNEY CH."},
@@ -624,7 +629,7 @@
 {"freq": 12207.0, "dvbs": {"pol": "V", "diseqc": 0, "srate": 29700}, "sid": 9004, "title": "PARIS PREMIERE"},
 {"freq": 12207.0, "dvbs": {"pol": "V", "diseqc": 0, "srate": 29700}, "sid": 9005, "title": "EUROSPORT 1"},
 {"freq": 12207.0, "dvbs": {"pol": "V", "diseqc": 0, "srate": 29700}, "sid": 9006, "title": "PLANETE+"},
-{"freq": 12207.0, "dvbs": {"pol": "V", "diseqc": 0, "srate": 29700}, "sid": 9007, "title": "DISNEY CHANNEL"},
+{"freq": 12460.0, "dvbs": {"pol": "H", "diseqc": 0, "srate": 27500}, "sid": 1793, "title": "DISNEY CHANNEL"},
 {"freq": 12207.0, "dvbs": {"pol": "V", "diseqc": 0, "srate": 29700}, "sid": 9008, "title": "FRANCE 5"},
 {"freq": 12207.0, "dvbs": {"pol": "V", "diseqc": 0, "srate": 29700}, "sid": 9009, "title": "LCI"},
 {"freq": 12207.0, "dvbs": {"pol": "V", "diseqc": 0, "srate": 29700}, "sid": 9010, "title": "INFOSPORT+"},

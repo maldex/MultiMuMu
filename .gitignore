@@ -3,6 +3,5 @@ __pycache__/
 *$py.class
 .idea/
 *.log
-config/*
 *.m3u
 my_dvb_toolbox/*.out

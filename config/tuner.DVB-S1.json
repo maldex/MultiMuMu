@@ -8,5 +8,5 @@
     "station_cfg": "config/station.DVB-S1.json",
     "tuner": "0001",
     "cam": null,
-    "container": "docker run --rm -v /tmp:/tmp --device /dev/dvb/ -p 8501:8501 maldex/my_dvb_toolbox"
+    "container": "docker run --rm -v /tmp:/tmp --device /dev/dvb/ -p 8501:8501 mumudvb:sak"
 }

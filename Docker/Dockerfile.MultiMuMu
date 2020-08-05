@@ -1,8 +1,11 @@
 # cat Dockerfile.MultiMuMu | docker build -t multimumu:latest . -f -
 
 FROM    fedora:32
-COPY    apache.functions.sh ./
 RUN     dnf update -y && dnf install -y findutils git python3-pip httpd 
+
+RUN     pip3 install simplejson xmltodict paramiko
+
+COPY    apache.functions.sh ./
 RUN     source ./apache.functions.sh && \
             apache_install_all && \
             apache_minimum_modules
