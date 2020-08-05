@@ -5,3 +5,4 @@ __pycache__/
 *.log
 *.m3u
 my_dvb_toolbox/*.out
+Docker/id_rsa

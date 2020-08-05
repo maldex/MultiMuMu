@@ -14,6 +14,11 @@ RUN     mv /etc/httpd/conf/httpd.conf /etc/httpd/conf/httpd.conf.distro
 
 COPY    httpd.conf /etc/httpd/conf/httpd.conf 
 
+RUN     mkdir -v ~apache/.ssh
+COPY    id_rsa /usr/share/httpd/.ssh/
+RUN     chown -R apache:apache ~apache/.ssh && chmod 700 ~apache/.ssh && chmod 600 ~apache/.ssh/id_rsa 
+
+
 RUN     chown -R root:apache /etc/httpd
 
 RUN     mkdir /log && chown apache:apache /log
@@ -31,7 +36,11 @@ VOLUME  /MultiMuMu/config
 EXPOSE  80:80
  
 # assume standard runtime executable to be bash
-CMD     ["/usr/sbin/httpd","-DFOREGROUND"]
+CMD     /usr/sbin/httpd -DFOREGROUND
 
 
-# 
+# --network=host
+
+# docker run -it --rm -p 80:80 -v `pwd`/../config:/MultiMuMu/config -v /etc/hosts:/etc/hosts multimumu:latest bash
+ #--network=host
+

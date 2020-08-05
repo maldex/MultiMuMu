@@ -15,7 +15,8 @@ class _serializable(object):
 
     def deserialize(self,data):
         try:
-            data = json.loads(data)
+            data = json.loads(str(data))
+            data = data
         except KeyError: # not a json
             pass
         self.__dict__.update(data)

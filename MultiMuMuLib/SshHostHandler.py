@@ -19,7 +19,7 @@ class SshHostHandler(object):
         (stdin, stdout, stderr) = self.connection.exec_command(cmd)
         err = stderr.read()
         if err != '':
-            print((Exception("error while SSHing " + err)))
+            print((Exception("error while SSHing " + str(err))))
             return []
         return stdout.read().strip().split(os.linesep)
 

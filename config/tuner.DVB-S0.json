@@ -4,7 +4,7 @@
     "ssh_host": "DVB-S0",
     "ssh_pass": null,
     "ssh_port": 22,
-    "ssh_user": "user",
+    "ssh_user": "MultiMuMu",
     "station_cfg": "config/station.DVB-S0.json",
     "tuner": "0000",
     "cam": 0,
