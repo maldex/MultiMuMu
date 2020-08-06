@@ -36,10 +36,10 @@ function apache_install_all() {
     mv -v conf.d/mod_security.conf conf.modules.d/
      
     echo ">>> enable apache start at system startup and allow firewall"
-    systemctl enable httpd
-    firewall-cmd --zone=public --add-service=http --permanent
-    firewall-cmd --zone=public --add-service=https --permanent
-    firewall-cmd --reload
+    #systemctl enable httpd
+    #firewall-cmd --zone=public --add-service=http --permanent
+    #firewall-cmd --zone=public --add-service=https --permanent
+    #firewall-cmd --reload
      
     echo ">>> create a copy of default config"
     tar -zcf ~/http-orig.tgz /var/www /etc/httpd
@@ -98,7 +98,7 @@ function apache_lil_tweaks() {
     # lil nice-ness
     sed -i 's/FancyIndexing/FancyIndexing NameWidth=*/g' conf.d/autoindex.conf
     sed -i 's/^#;//g' conf.d/autoindex.conf
-    httpd -S && systemctl restart httpd
+    httpd -S #&& systemctl restart httpd
 }
 
 function apache_default_vhost(){
@@ -188,7 +188,7 @@ IncludeOptional              conf.d/*.conf
     Apache: <a href=/server-status>server-status</a> <br>" >> /var/www/html/index.html
 
     echo ">>> list vhost config (httpd -S) and restart apache"
-    httpd -S && systemctl restart httpd
+    httpd -S #&& systemctl restart httpd
     echo "GOTO HTTP://`hostname -f`"
     echo ">>> function ${FUNCNAME[0]} done"
 }
@@ -196,6 +196,7 @@ IncludeOptional              conf.d/*.conf
 function apache_enable_proxy(){
     _apache_module_enabler proxy_module
     _apache_module_enabler proxy_http_module
+    _apache_module_enabler proxy_html
     echo ">>> placing demo-vhost into conf.d/vhost-simple-proxy.conf"
     echo "# sample vhost for simple proxy
 <VirtualHost *:80>
@@ -224,7 +225,7 @@ function apache_enable_proxy(){
 </VirtualHost> " > conf.d/vhost-simple-proxy.conf
 
     echo ">>> list vhost config (httpd -S) and restart apache"
-    httpd -S && systemctl restart httpd
+    httpd -S # && systemctl restart httpd
     echo "GOTO HTTP://simple.your.domain"
     echo ">>> don't forget about  'tail -fn0 /var/log/httpd/*_log'  when testing"
     echo ">>> function ${FUNCNAME[0]} done"
@@ -259,7 +260,7 @@ function apache_enable_ssl(){
     _apache_module_enabler ssl_module 
     _apache_module_enabler socache_shmcb_module
 
-    httpd -S && systemctl restart httpd
+    httpd -S # && systemctl restart httpd
     echo "GOTO HTTPS://`hostname -f`"
     echo ">>> function ${FUNCNAME[0]} done"
 }
@@ -346,7 +347,7 @@ function apache_mkComplexProxy() {
         </Proxy>
 </VirtualHost>
 " > conf.d/vhost-complex-proxy.conf
-    httpd -S && systemctl restart httpd
+    httpd -S # && systemctl restart httpd
     echo ">>> function ${FUNCNAME[0]} done"
 }
 
@@ -434,7 +435,7 @@ function old_apache_install_minimal(){
     ##############################################################################
     # do not yet install mod_ssl or mod_proxy_html!!
     yum install -y httpd mod_evasive  whois
-    systemctl enable httpd
+    # systemctl enable httpd
 
     # fixing permissions
     setfacl -d -m g:wheel:rwX /var/log/httpd 
@@ -522,7 +523,7 @@ IncludeOptional              conf.d/*.conf
     done
 
     # restarting and printing config
-    httpd -S && systemctl restart httpd
+    httpd -S #&& systemctl restart httpd
     echo "GOTO HTTP://`hostname -f`"
 }
 
@@ -533,7 +534,7 @@ function old_apache_ease_evasive() {
     sed -i 's/DOSPageCount .*/DOSPageCount 10/g' conf.d/mod_evasive.conf
     sed -i 's/DOSSiteCount .*/DOSSiteCount 150/g' conf.d/mod_evasive.conf
     sed -i 's/DOSBlockingPeriod .*/DOSBlockingPeriod 5/g' conf.d/mod_evasive.conf
-    httpd -S && systemctl restart httpd
+    httpd -S #&& systemctl restart httpd
 }
 
 function old_apache_enable_autoindex() {
@@ -542,7 +543,7 @@ function old_apache_enable_autoindex() {
     sed -i 's/FancyIndexing/FancyIndexing NameWidth=*/g' conf.d/autoindex.conf
     sed -i 's/^#;//g' conf.d/autoindex.conf
     sed -i '/mod_autoindex/s/^#;//' conf.modules.d/*
-    httpd -S && systemctl restart httpd
+    httpd -S #&& systemctl restart httpd
 }
 
 function old_apache_enable_php55() {
@@ -561,7 +562,7 @@ function old_apache_enable_php55() {
     <body> <?php phpinfo(); ?> </body>
     </html>" >/var/www/html/info.php
     echo"PHP: <a href=/info.php>info.php</a><br>"  >> /var/www/html/index.html
-    httpd -S && systemctl restart httpd
+    httpd -S # && systemctl restart httpd
     echo "GOTO HTTP://`hostname -f`/info.php"
 }
 
@@ -635,7 +636,7 @@ function old_apache_enable_proxy() {
 " > conf.d/vhost-demo-proxy.conf
     echo "Apache: <a href=/balancer-manager>balancer-managers</a> <br>" >> /var/www/html/index.html
 
-    httpd -S && systemctl restart httpd   
+    httpd -S # && systemctl restart httpd   
     echo "GOTO HTTP://asdf.`hostname -f`, see conf.d/vhost-demo-proxy.conf"
 }
 
@@ -711,7 +712,7 @@ IncludeOptional              conf.d/*.conf
     </Directory>
 </VirtualHost>
 " > conf.d/vhost-demo-ssl.conf
-    httpd -S && systemctl restart httpd   
+    httpd -S # && systemctl restart httpd   
     echo "GOTO HTTP://ssl.`hostname -f`, see conf.d/vhost-demo-ssl.conf"
 }
 
