@@ -2,6 +2,47 @@ h2. based on CentOS 8
 
 export pUser=MultiMuMu
 
+
+
+function install_service_frontail(){
+    echo "  >> adding FRONTAIL"
+    dnf install -y npm
+    npm install frontail -g
+
+    cat << EOF > /usr/lib/systemd/system/frontail.service
+[Unit]
+Description=Frontail log2web
+ 
+[Service]
+ExecStart=/usr/local/bin/frontail -p 7411 --ui-highlight -t dark /var/log/httpd/access_log /var/log/httpd/error_log /home/MultiMuMu/MultiMuMu/MultiMuMu.log
+ 
+[Install]
+WantedBy=multi-user.target
+EOF
+
+    firewall-cmd --permanent --add-port=7411/tcp
+    firewall-cmd --reload
+    systemctl daemon-reload
+    systemctl enable --now frontail
+}
+
+
+
+function install_apache(){
+    source `getent passwd ${pUser} | cut -d: -f 6`/MultiMuMu/Docker/apache.functions.sh
+    apache_install_all
+    apache_minimum_modules 
+    apache_enable_proxy
+    apache_enable_balancer
+    mv /etc/httpd/conf/httpd.conf /etc/httpd/conf/httpd.conf.org
+    cp `getent passwd ${pUser} | cut -d: -f 6`/MultiMuMu/Docker/httpd.conf /etc/httpd/conf/httpd
+    chown root:apache /MultiMuMu/Docker/httpd.conf
+}
+
+function build_mumudvb_container() {
+    su - ${pUser} -c "cd ~/MultiMuMu/Docker; sed -r 's_^#(cam|scam|tool);__g' Dockerfile.MumuDVB | docker build -t mumudvb:sak . -f -"
+}
+
 function install_docker() {
     echo "    ${FUNCNAME[*]} >> installing Docker"
     dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
@@ -29,6 +70,7 @@ function clone_project() {
         useradd -c "MultiMuMu project user" -g users -G tty,dialout,video,audio,sudoers ${pUser}
         echo "${pUser}-${pUser}" | passwd ${pUser} --stdin
         su - ${pUser} -c "`which ssh-keygen` -q -N '' -f ~/.ssh/id_rsa -C ${pUser}@`hostname -f`-`date +%Y%m%d-%H%M`"
+        su - ${pUser} -c "cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys"
         su - ${pUser} -c "ssh-keyscan github.com >> ~/.ssh/known_hosts"
         echo " ---"
         cat `getent passwd ${pUser} | cut -d: -f 6`/.ssh/id_rsa.pub
@@ -66,5 +108,10 @@ function install_ddriver() {
     echo "it's recommended to reboot now"
 }
 
-function build_docker() {
-}
+clone_project
+install_ddriver_requirements
+install_ddriver
+install_docker
+build_mumudvb_container
+
+install_service_frontail
