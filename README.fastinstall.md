@@ -1,8 +1,6 @@
-h2. based on CentOS 8
-
+### based on CentOS 8
+```
 export pUser=MultiMuMu
-
-
 
 function install_service_frontail(){
     echo "  >> adding FRONTAIL"
@@ -115,3 +113,4 @@ install_docker
 build_mumudvb_container
 
 install_service_frontail
+```
