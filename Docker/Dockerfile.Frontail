@@ -1,0 +1,24 @@
+# Build: cat Dockerfile.Frontail | docker build -t maldex/frontail:latest . -f -
+# Run: docker run -it --rm --volume /var/log:/log --publish 7411:9001 maldex/frontail:latest 
+
+# which image to start from 
+FROM    alpine:latest
+
+# install procedures
+RUN     apk upgrade && apk add npm
+RUN     npm install frontail -g
+
+# add documentation
+COPY    Dockerfile.Frontail /
+
+# assume exposed ports
+EXPOSE  9001:9001
+
+# assume persistent storage
+VOLUME  /log
+
+# current working directory
+WORKDIR /log
+ 
+# start frontail
+CMD     [ "/bin/sh", "-c", "/usr/bin/frontail --port 9001 --lines 9999999 --ui-highlight -t dark `find . -type f -o -type l`" ]

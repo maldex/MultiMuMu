@@ -1,46 +1,70 @@
 # cat Dockerfile.MultiMuMu | docker build --no-cache -t multimumu:latest . -f -
 
 FROM    fedora:32
-RUN     dnf install -y findutils git python3-pip httpd 
 
-RUN     mkdir -v ~apache/.ssh
-COPY    id_rsa* /usr/share/httpd/.ssh/
-RUN     chown -R apache:apache ~apache/.ssh && chmod 700 ~apache/.ssh && chmod 600 ~apache/.ssh/id_rsa*
-
-
-RUN     chown -R root:apache /etc/httpd
-
-RUN     mkdir /log && chown apache:apache /log
-
+RUN     dnf install -y findutils git python3-pip wget acl
 RUN     pip3 install simplejson xmltodict paramiko
+
+# RUN     wget -O /etc/yum.repos.d/docker-ce.repo https://download.docker.com/linux/fedora/docker-ce.repo
+# RUN     echo "lower fedora >=32 to 31" && sed -i 's/$releasever/31/g' /etc/yum.repos.d/docker-ce.repo
+# RUN     yum install --nobest -y docker-ce
+RUN     composeVersion=1.26.0 && \
+        wget -O /usr/bin/docker-compose "https://github.com/docker/compose/releases/download/${composeVersion}/docker-compose-$(uname -s)-$(uname -m)" && \
+        chmod -v +x /usr/bin/docker-compose
+
+#RUN     mkdir -v ~apache/.ssh
+#COPY    ${HOME}/.ssh/id_rsa* /usr/share/httpd/.ssh/
+#RUN     chown -R apache:apache ~apache/.ssh && chmod 700 ~apache/.ssh && chmod 600 ~apache/.ssh/id_rsa*
+#RUN     rm -rf /MultiMuMu/log/ /MultiMuMu/config/
 RUN     cd / && git clone https://github.com/maldex/MultiMuMu.git
-
-
-COPY    httpd.conf /etc/httpd/conf/httpd.conf 
+RUN     mkdir -p /home/MultiMuMu
+RUN     ln -s /MultiMuMu /home/MultiMuMu/
 
 COPY    apache.functions.sh ./
-RUN     source ./apache.functions.sh && apache_install_all 
-RUN     source ./apache.functions.sh && apache_minimum_modules 
-RUN     source ./apache.functions.sh && apache_enable_proxy
-RUN     source ./apache.functions.sh && apache_enable_balancer
-            
+
+#RUN     source ./apache.functions.sh && apache_install_all && \
+#        apache_minimum_modules && \
+#        apache_enable_proxy && \
+#        apache_enable_balancer && \
+#        apache_ease_evasive && \
+#        _apache_module_enabler mod_cgi && \
+#        _apache_module_enabler mod_cgid
+
+RUN     yum install -y httpd mod_evasive mod_security mod_proxy_html mod_ssl
+
+RUN     setfacl -R -m u:apache:rX /MultiMuMu
+
+
+COPY    httpd.conf /etc/httpd/conf/httpd.conf           
+
+
+RUN     echo "sed -i 's_/home/MultiMuMu/_/_g' /etc/httpd/conf/httpd.conf" >> /startup.sh && \
+        echo "sed -i 's_/var/log/httpd/_/MultiMuMu/log/_g' /etc/httpd/conf/httpd.conf" >> /startup.sh && \
+        echo "setfacl -d -R -m u:apache:rwX /MultiMuMu/log/" >> /startup.sh && \
+        echo "setfacl -R -m u:apache:rwX /MultiMuMu/log/" >> /startup.sh && \
+        echo "cat /etc/httpd/conf/httpd.conf" >> /startup.sh && \
+        echo "httpd -M" >> /startup.sh && \
+        echo "httpd -S" >> /startup.sh && \
+        echo "httpd -D FOREGROUND" >> /startup.sh && \
+        echo "echo exit with \$?" >> /startup.sh
+
+        
+RUN     chmod +x /startup.sh
+
 
 COPY    Dockerfile.MultiMuMu /
-  
-# use this user as default user
 
-# assume persistent storage
-VOLUME  /MultiMuMu/config
+
+VOLUME  /MultiMuMu/log/
+VOLUME  /MultiMuMu/config/
  
-# assume exposed ports
-EXPOSE  80:80
- 
-# assume standard runtime executable to be bash
-CMD     ["/usr/sbin/httpd", "-D", "FOREGROUND"]
-ENTRYPOINT ["/usr/sbin/httpd", "-D", "FOREGROUND"]
 
-# --network=host
+EXPOSE  80
 
-# docker run -it --rm -p 80:80 -v `pwd`/../config:/MultiMuMu/config -v /etc/hosts:/etc/hosts multimumu:latest bash
- #--network=host
+CMD     [ "/bin/bash", "-c", "{ /startup.sh >> /MultiMuMu/log/stdout.log 2>&1; }" ]
+
+# cat Dockerfile.MultiMuMu | docker build -t multimumu . -f -
+# docker run -it --rm -p 80:80 -v `pwd`/../config:/MultiMuMu/config -v `pwd`/../log:/MultiMuMu/log multimumu bash
+# docker run -it --rm -p 80:80 --mount type=bind,source=`pwd`/log,target=/MultiMuMu/log multimumu bash
+#--network=host
 

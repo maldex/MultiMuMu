@@ -1,0 +1,57 @@
+# cat Dockerfile.MultiMuMu | docker build --no-cache -t multimumu:latest . -f -
+
+FROM    fedora:32
+RUN     dnf install -y findutils git python3-pip httpd 
+RUN     pip3 install simplejson xmltodict paramiko
+
+
+#RUN     mkdir -v ~apache/.ssh
+#COPY    ${HOME}/.ssh/id_rsa* /usr/share/httpd/.ssh/
+#RUN     chown -R apache:apache ~apache/.ssh && chmod 700 ~apache/.ssh && chmod 600 ~apache/.ssh/id_rsa*
+
+
+RUN     chown -R root:apache /etc/httpd
+
+RUN     mkdir /log && chown apache:apache /log
+
+RUN     mkdir -p /home/MultiMuMu
+RUN     cd /home/MultiMuMu && git clone https://github.com/maldex/MultiMuMu.git
+
+
+COPY    httpd.conf /etc/httpd/conf/httpd.conf 
+
+COPY    apache.functions.sh ./
+RUN     source ./apache.functions.sh && apache_install_all 
+RUN     source ./apache.functions.sh && apache_minimum_modules 
+RUN     source ./apache.functions.sh && apache_enable_proxy
+RUN     source ./apache.functions.sh && apache_enable_balancer
+            
+
+COPY    Dockerfile.MultiMuMu /
+  
+# use this user as default user
+
+
+
+RUN     echo "/usr/sbin/httpd -S"  > /start.sh
+RUN     echo "service apache2 restart" >> /start.sh
+RUN     echo "echo $?" >> /start.sh
+RUN     echo "cat /var/log/httpd/*_log" >> /start.sh
+RUN     chmod +x /start.sh
+
+# assume persistent storage
+VOLUME  /MultiMuMu/config
+ 
+# assume exposed ports
+EXPOSE  80:80
+ 
+# assume standard runtime executable to be bash
+#CMD     [ "/bin/bash", "-c", "/usr/sbin/httpd -M; /usr/sbin/httpd -S; /usr/sbin/httpd -D FOREGROUND"]
+# ENTRYPOINT ["/usr/sbin/httpd", "-D", "FOREGROUND"]
+
+CMD [ "/bin/bash", "-c", "/start.sh" ]
+
+# cat Dockerfile.MultiMuMu | docker build -t multimumu . -f -
+# docker run -it --rm -p 80:80 -v `pwd`/../config:/MultiMuMu/config -v /etc/hosts:/etc/hosts multimumu bash
+#--network=host
+

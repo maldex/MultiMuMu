@@ -67,7 +67,7 @@ function clone_project() {
     if ! getent passwd ${pUser}; then
         useradd -c "MultiMuMu project user" -g users -G tty,dialout,video,audio,sudoers ${pUser}
         echo "${pUser}-${pUser}" | passwd ${pUser} --stdin
-        su - ${pUser} -c "`which ssh-keygen` -q -N '' -f ~/.ssh/id_rsa -C ${pUser}@`hostname -f`-`date +%Y%m%d-%H%M`"
+        su - ${pUser} -c "`which ssh-keygen` -q -N '' -f ~/.ssh/id_rsa -C ${pUser}@`hostname -s`-`date +%Y%m%d-%H%M`"
         su - ${pUser} -c "cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys"
         su - ${pUser} -c "ssh-keyscan github.com >> ~/.ssh/known_hosts"
         echo " ---"
@@ -110,7 +110,14 @@ clone_project
 install_ddriver_requirements
 install_ddriver
 install_docker
-build_mumudvb_container
+build_mumudvb_container # docker-compose up --build
+
 
 install_service_frontail
 ```
+
+
+```
+docker-compose down
+docker-compose up --build
+docker-compose up

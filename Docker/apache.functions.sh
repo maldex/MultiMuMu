@@ -24,9 +24,9 @@ function _apache_module_enabler() {
 }
 
 function apache_install_all() {    
-    echo ">>> enable epel-repo (for at least mod_evasive)"
-    yum install -y epel-release
-     
+    
+    if ! yum provides mod_evasive; then echo "CANNOT ADD MOD EVASIVE"; fi
+    
     echo ">>> install apache and modules"
     yum install -y httpd mod_evasive mod_security mod_proxy_html mod_ssl
      
@@ -197,6 +197,11 @@ function apache_enable_proxy(){
     _apache_module_enabler proxy_module
     _apache_module_enabler proxy_http_module
     _apache_module_enabler proxy_html
+    _apache_module_enabler mod_proxy
+    _apache_module_enabler mod_proxy_connect
+    _apache_module_enabler mod_proxy_http
+    _apache_module_enabler mod_proxy_wstunnel
+    _apache_module_enabler mod_watchdog
     echo ">>> placing demo-vhost into conf.d/vhost-simple-proxy.conf"
     echo "# sample vhost for simple proxy
 <VirtualHost *:80>
@@ -527,7 +532,7 @@ IncludeOptional              conf.d/*.conf
     echo "GOTO HTTP://`hostname -f`"
 }
 
-function old_apache_ease_evasive() {
+function apache_ease_evasive() {
     cd /etc/httpd
     cp conf.d/mod_evasive.conf conf.d/mod_evasive.conf.`date +%Y%m%d-%H%M%S`
     sed -i 's/DOSHashTableSize .*/DOSHashTableSize 30000/g' conf.d/mod_evasive.conf

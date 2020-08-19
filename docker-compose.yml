@@ -1,0 +1,22 @@
+version: '3'
+services:
+  frontail:
+    build:
+      context: ./Docker
+      dockerfile: Dockerfile.Frontail
+    ports:
+      - "9001:9001"
+    volumes:
+      - /home/MultiMuMu/MultiMuMu/log:/log
+      
+  multimumu:
+    build:
+      context: ./Docker
+      dockerfile: Dockerfile.MultiMuMu
+    ports:
+      - "80:80"
+    volumes:
+      - /home/MultiMuMu/MultiMuMu/log:/MultiMuMu/log
+      - /home/MultiMuMu/MultiMuMu/config:/MultiMuMu/config
+      
+      
