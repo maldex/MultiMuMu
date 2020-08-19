@@ -5,7 +5,7 @@ services:
       context: ./Docker
       dockerfile: Dockerfile.Frontail
     ports:
-      - "9001:9001"
+      - 9001:9001
     volumes:
       - /home/MultiMuMu/MultiMuMu/log:/log
       
@@ -14,9 +14,16 @@ services:
       context: ./Docker
       dockerfile: Dockerfile.MultiMuMu
     ports:
-      - "80:80"
+      - 80:80
     volumes:
       - /home/MultiMuMu/MultiMuMu/log:/MultiMuMu/log
       - /home/MultiMuMu/MultiMuMu/config:/MultiMuMu/config
+      - /var/run/docker.sock:/var/run/docker.sock
       
-      
+  mumudvb-s0:
+    image: maldex/mumudvb:sak
+    ports:
+        - 5800:5800
+    volumes:
+        - /home/MultiMuMu/MultiMuMu/config:/conf
+    command: "mumudvb -d -c /conf/mumudvb-s0.conf"

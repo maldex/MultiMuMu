@@ -57,6 +57,7 @@ COPY    Dockerfile.MultiMuMu /
 
 VOLUME  /MultiMuMu/log/
 VOLUME  /MultiMuMu/config/
+VOLUME  /MultiMuMu/
  
 
 EXPOSE  80
