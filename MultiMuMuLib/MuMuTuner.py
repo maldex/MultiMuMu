@@ -26,6 +26,9 @@ class MuMuTuner(object):
         self.cam = cam
         self.container = container
 
+
+
+
     def _get_my_pid(self):
         try:
             # return self.ssh.get_pids('mumudvb', filter=self.conffile)[0]
@@ -42,7 +45,7 @@ class MuMuTuner(object):
             self.ssh.kill_pid(self._get_my_pid())
 
 
-        cmd = "mumudvb -d -c " + self.conffile + " > /tmp/mumuout-" + self.tuner + ".txt 2>&1 &"
+        cmd = "mumudvb -d -c " + self.conffile + " > /home/MultiMuMu/MultiMuMu/log/mumuout-" + self.tuner + ".log 2>&1 &"
         if self.container is None:
             cmd = "nohup " + cmd
         else:
@@ -141,7 +144,7 @@ class MuMuTuner(object):
             response = urllib.request.urlopen(self._http_conf + '/playlist.m3u').read()
         except urllib.error.URLError:   # internal http not ready yet
             return cc
-        for l in response.split(os.linesep):
+        for l in response.decode().split(os.linesep):
             if l.startswith('http://'):
                 cc['sids'].append(int(l.split('/')[-1]))
         return cc

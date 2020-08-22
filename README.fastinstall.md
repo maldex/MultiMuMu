@@ -1,3 +1,4 @@
+intel me: http://ip:16992/
 ### based on CentOS 8
 ```
 export pUser=MultiMuMu
@@ -35,32 +36,29 @@ function install_apache(){
     mv /etc/httpd/conf/httpd.conf /etc/httpd/conf/httpd.conf.org
     cp `getent passwd ${pUser} | cut -d: -f 6`/MultiMuMu/Docker/httpd.conf /etc/httpd/conf/httpd
     chown root:apache /MultiMuMu/Docker/httpd.conf
+
+mkdir ~apache/.ssh
+vi ~apache/.ssh/id_rsa
+chown -R apache:apache ~apache/.ssh
+chmod 700 ~apache/.ssh; chmod 600 ~apache/.ssh/id_rsa
+usermod -s /bin/bash apache
+su - apache
+ssh MultiMuMu@DVB-S0  # no passwd!
+ssh MultiMuMu@DVB-S1  # no passwd!
+usermod -s /bin/nologin apache
 }
 
-function build_mumudvb_container() {
-    su - ${pUser} -c "cd ~/MultiMuMu/Docker; sed -r 's_^#(cam|scam|tool);__g' Dockerfile.MumuDVB | docker build -t mumudvb:sak . -f -"
-}
 
-function install_docker() {
-    echo "    ${FUNCNAME[*]} >> installing Docker"
-    dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
-        
-    yum install --nobest -y docker-ce
-    systemctl enable --now docker
-    
-    firewall-cmd --permanent --zone=trusted --add-interface=docker0
-    firewall-cmd --reload
-    
-    # add all users that belong to users also to docker
-    for u in `getent group users | awk -F':' '{print $NF}' | tr ',' ' '`; do
-        echo "    ${FUNCNAME[*]} >> adding user '${u}' to group 'docker'"
-        usermod -a -G docker ${u}
-    done
-    
-    composeVersion=1.26.0
-    echo "    ${FUNCNAME[*]} >> downloading docker-compose ${composeVersion} for $(uname -s) $(uname -m)"
-    curl -L "https://github.com/docker/compose/releases/download/${composeVersion}/docker-compose-$(uname -s)-$(uname -m)" -o /usr/bin/docker-compose
-    chmod -v +x /usr/bin/docker-compose
+function project_requs() {
+    dnf install -y git
+    dnf install -y findutils git python3-pip wget acl python3
+    pip3 install simplejson xmltodict paramiko
+    cat <<EOF >> /etc/hosts
+127.0.0.1   DVB-S0  DVB-S1 frontail
+EOF
+
+
+
 }
 
 function clone_project() {
@@ -74,17 +72,8 @@ function clone_project() {
         cat `getent passwd ${pUser} | cut -d: -f 6`/.ssh/id_rsa.pub
         echo " ---"
     fi
-    dnf install -y git
     su - ${pUser} -c "git clone git@github.com:maldex/MultiMuMu.git"
     }
-
-
-function build_mumudvb_container() {
-    pushd `getent passwd ${pUser} | cut -d: -f 6`/MultiMuMu/Docker > /dev/null
-    sed -r 's_^#(cam|scam|tool);__g' Dockerfile.MumuDVB | docker build -t mumudvb:sak . -f -
-    cat Dockerfile.MultiMuMu | docker build -t multimumu:latest . -f -
-    popd > /dev/null
-}
 
 function install_ddriver_requirements() {
     dnf install -y git gcc gcc-c++ make libev libev-devel xz libdvbcsa-devel elfutils-libelf-devel openssl-devel dkms
@@ -106,11 +95,122 @@ function install_ddriver() {
     echo "it's recommended to reboot now"
 }
 
+function install_mumudvb(){
+	dnf install -y git gcc gcc-c++ make automake autoconf gettext-devel wget mercurial patch glibc-static openssl-devel dialog svn pcsc-lite pcsc-lite-devel libusb libusb-devel findutils file libtool libev-devel
+
+#######
+# requirements
+####### 
+
+	# do not use pre-built dvb-apps and libdvbcsa from distro-mirror, but build from sources. This is required for cam support on fedora.
+	cd /usr/local/src && \
+        hg clone http://linuxtv.org/hg/dvb-apps && \
+        cd dvb-apps && \
+        # patching for >=4.14 Kernel (https://aur.archlinux.org/packages/linuxtv-dvb-apps)
+        wget -q -O - https://git.busybox.net/buildroot/plain/package/dvb-apps/0003-handle-static-shared-only-build.patch | patch -p1 && \
+        wget -q -O - https://git.busybox.net/buildroot/plain/package/dvb-apps/0005-utils-fix-build-with-kernel-headers-4.14.patch | patch -p1 && \
+        wget -q -O - https://gitweb.gentoo.org/repo/gentoo.git/plain/media-tv/linuxtv-dvb-apps/files/linuxtv-dvb-apps-1.1.1.20100223-perl526.patch | patch -p1 && \
+        make && make install && \
+        ldconfig   # b/c libdvben50221.so
+
+	cd /usr/local/src && \
+        git clone https://code.videolan.org/videolan/libdvbcsa.git && \
+        cd libdvbcsa && \
+        autoreconf -i -f && \
+        ./configure --prefix=/usr && make && make install && \
+	ldconfig   # b/c libdvbcsa.so
+
+	cd /usr/local/src && \
+        svn checkout http://www.streamboard.tv/svn/oscam/trunk oscam-svn && \
+        cd oscam-svn && \
+        make USE_PCSC=1 USE_LIBUSB=1
+
+	cd /usr/local/src && \
+        git clone https://github.com/gfto/tsdecrypt.git && \
+        cd tsdecrypt && \
+        git submodule init && \
+        git submodule update && \
+        make && make install    
+
+#######
+# MUMUDVB
+####### 
+# note: the ./configure will detect cam/scam support automagically if everything provided
+	cd /usr/local/src && \
+        ldconfig && \
+        git clone https://github.com/braice/MuMuDVB.git && \
+        cd MuMuDVB && \
+        autoreconf -i -f && \
+        ./configure --enable-android && \
+        make && make install
+
+#######
+# OPTIONAL: TOOLBOXING
+####### 
+     cd /usr/local/src && \
+        git clone https://code.videolan.org/videolan/bitstream.git && \
+        cd bitstream && \
+        make all && make install
+
+    cd /usr/local/src && \
+        git clone https://code.videolan.org/videolan/dvblast.git && \
+        cd dvblast && \
+        make all && make install
+         
+     cd /usr/local/src && \
+        git clone https://github.com/Max-T/w_scan.git&& \
+        cd w_scan/ && \
+        sh ./configure && make && make install
+          
+     cd /usr/local/src && \
+        git clone https://github.com/stefantalpalaru/w_scan2.git && \
+        cd w_scan2 && \
+        autoreconf -i -f && \
+        ./configure && make && make install
+         
+     cd /usr/local/src && \
+	yum install -y wget && \
+        wget http://udpxy.com/download/udpxy/udpxy-src.tar.gz && \
+        tar -zxf udpxy-src.tar.gz && \
+        cd udpxy-*/ && \
+        make && make install 
+          
+     cd /usr/local/src && \
+        yum install -y xz wget && \
+        wget ftp://ftp.videolan.org/pub/videolan/miniSAPserver/0.3.8/minisapserver-0.3.8.tar.xz && \
+        tar -Jxf minisapserver-0.3.8.tar.xz && \
+        cd minisapserver-*/ && \
+        ./configure && make && make install
+}
+
+function prepare_http(){
+	yum install -y https://pkgs.dyn.su/el8/extras/x86_64/mod_evasive-1.10.1-33.el8.x86_64.rpm
+	cd ~MultiMuMu/MultiMuMu/Docker/
+	source apache.functions.sh
+	apache_install_all && \
+	apache_minimum_modules  && \
+	apache_default_vhost  && \
+	apache_lil_tweaks  && \
+	apache_enable_proxy  && \
+	apache_enable_balancer
+
+cd /etc/httpd/conf
+cp -v ~MultiMuMu/MultiMuMu/Docker/httpd.conf ./
+chown root:apache httpd.conf
+httpd -S
+setfacl -R -d -m u:apache:rX ~MultiMuMu/
+setfacl -R -m u:apache:rX ~MultiMuMu/
+
+setfacl -R -d -m u:apache:rwX ~MultiMuMu/MultiMuMu/log
+setfacl -R -m u:apache:rwX ~MultiMuMu/MultiMuMu/log
+
+}
+
 clone_project
 install_ddriver_requirements
 install_ddriver
 install_docker
-build_mumudvb_container # docker-compose up --build
+
 
 
 install_service_frontail
