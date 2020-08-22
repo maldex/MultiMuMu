@@ -128,8 +128,8 @@ class MuMuTunerScanner(SshHostHandler):
             r = (r and self.scan_and_decode_xsfp_to_AM_station( do_scan=do_scan))
 
         if self.type == 's':
-            for sat in ['S16E0','S13E0','S19E2']:
-#            for sat in ['S19E2', 'S13E0', 'S9E0', 'S10E0', 'S16E0', 'S20E0', 'S21E6']:
+ #            for sat in ['S16E0','S13E0','S19E2']:
+            for sat in ['S19E2', 'S13E0', 'S9E0', 'S10E0', 'S16E0', 'S20E0', 'S21E6']:
                 for diseqc in [0,1]:
                     b = self.scan_and_decode_xsfp_to_AM_station(sat=sat, DiSEqC=diseqc, do_scan=do_scan)
                     r = (r and b)
