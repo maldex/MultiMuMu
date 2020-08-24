@@ -92,7 +92,9 @@ function install_ddriver() {
     sudo depmod -a
     sudo rmmod ddbridge; sudo modprobe ddbridge
     dmesg | grep -i -e ddbridge -e dvb_ca
+    echo "rmmod ddbridge ; modprobe -v ddbridge; echo \"00 02\" > /sys/class/ddbridge/ddbridge0/redirect" >> /etc/rc.local
     echo "it's recommended to reboot now"
+
 }
 
 function install_mumudvb(){
