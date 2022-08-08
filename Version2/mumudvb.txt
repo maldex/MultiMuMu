@@ -1,0 +1,70 @@
+
+```
+cat <<EOF > /lib/modprobe.d/ddbridge.conf
+options ddbridge adapter_alloc=3
+options dvb-core cam_debug=1 debug=1
+EOF
+
+cat <<EOF > /etc/depmod.d/extra.conf
+search extra updates built-in
+EOF
+
+cat <<EOF > /etc/rc.local
+#! /bin/bash
+rmmod ddbridge dvb-core
+modprobe -v ddbridge
+echo "00 01" > /sys/class/ddbridge/ddbridge0/redirect
+#echo "00 01" > /sys/class/ddbridge/ddbridge0/redirect
+#will pipe input 0 of card 0 through CI at port 1 (TAB 2) of card 0.
+exit 0
+EOF
+
+sudo systemctl enable rc-local.service
+
+dmesg | grep -i -e ddbridge -e dvb
+
+
+sudo dnf -y install dnf-plugins-core
+sudo dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
+sudo dnf install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+sudo usermod -aG docker user
+sudo systemctl enable --now docker
+
+docker pull maldex/mumudvb:sak
+
+docker run -it --rm -v /tmp:/tmp --device /dev/dvb/ maldex/mumudvb:sak bash
+
+for sat in S10E0 S13E0 S16E0 S19E2 S20E0; do 
+for switch in 0c 1c 2c 3c; do
+    time w_scan -fs -a /dev/dvb/adapter0/frontend0 --satellite ${sat} --radio-services 0 --tv-services 1 --encrypted-services 0 -other-services 0 --diseqc-switch ${switch} --output-VLC | tee /tmp/${sat}-${switch}.xml
+done
+done
+
+time w_scan -fs -a /dev/dvb/adapter0/frontend0 --satellite S13E0 --radio-services 0 --tv-services 1 --encrypted-services 1 -other-services 0 --diseqc-switch 1c --output-VLC | tee /tmp/hotbird.1c.xml
+time w_scan -fs -a /dev/dvb/adapter0/frontend0 --satellite S19E2 --radio-services 0 --tv-services 1 --encrypted-services 0 -other-services 0 --diseqc-switch 0c --output-VLC | tee /tmp/astra.0c.xml
+
+tar -zcvf "scans.`date +%Y%m%d-%H%M`.tgz" *.xml
+
+
+docker run -it --rm -v /root/mumudvb-0001.conf:/mumuconf.conf --device /dev/dvb/ -p 4242:4242 maldex/mumudvb:sak mumudvb -v -d -c /mumuconf.conf
+
+
+
+```
+
+                        <title>0031. RT HD</title>
+                        <location>dvb-s2://frequency=11376500</location>
+                        <extension application="http://www.videolan.org/vlc/playlist/0">
+                                <vlc:option>dvb-polarization=V</vlc:option>
+                                <vlc:option>dvb-srate=22000000</vlc:option>
+                                <vlc:option>dvb-ts-id=1012</vlc:option>
+                                <vlc:option>dvb-modulation=8PSK</vlc:option>
+                                <vlc:option>dvb-rolloff=35</vlc:option>
+                                <vlc:option>dvb-fec=2/3</vlc:option>
+                                <vlc:option>dvb-lnb-low=9750000</vlc:option>
+                                <vlc:option>dvb-lnb-high=10600000</vlc:option>
+                                <vlc:option>dvb-lnb-switch=11700000</vlc:option>
+                                <vlc:option>dvb-satno=0</vlc:option>
+                                <vlc:id>32</vlc:id>
+                                <vlc:option>program=6381</vlc:option>
+                        </extension>
